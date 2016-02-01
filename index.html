@@ -248,6 +248,9 @@
                 e.preventDefault();
                 return false
             };
+            window.oncontextmenu = function(e){
+                e.preventDefault();
+            };
             $id('player').addEventListener('ended', function() {
                 $class('active')[0].nextSibling.click();
             });
