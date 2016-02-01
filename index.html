@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <title>Material Player</title>
+    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.1.0/material.blue-yellow.min.css" />
+    <script defer src="//code.getmdl.io/1.1.0/material.min.js"></script>
+    <style>
+    #fileselect {
+        display: none;
+    }
+
+    #time {
+        color: white;
+        margin-bottom: 1em;
+    }
+
+    body {
+        background: #efefef;
+    }
+
+    table {
+        margin: auto;
+        width: 100%;
+        text-align: left;
+    }
+
+    tr {
+        cursor: pointer;
+    }
+
+    footer {
+        position: fixed;
+        line-height: 1em;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 99;
+        text-align: center;
+        background: #212121;
+        padding: 1.5em 0;
+    }
+
+    #footer a {
+        cursor: pointer;
+        display: inline-block;
+        vertical-align: middle;
+        transition: 250ms;
+        font-size: 3em;
+        line-height: 1em;
+        color: white;
+    }
+
+    audio {
+        width: 100%;
+        margin: auto;
+        display: none;
+    }
+
+    .mdl-button--fab {
+        position: fixed;
+        bottom: 4.25em;
+        right: 2em;
+        z-index: 999;
+    }
+
+    .mdl-data-table td,
+    .mdl-data-table th {
+        text-align: left;
+    }
+
+    .mdl-data-table tbody tr.active {
+        background-color: #eee;
+    }
+
+    .played #pause {
+        font-size: 3em;
+        transform: scale(1.1);
+    }
+
+    .played #play {
+        font-size: 0;
+    }
+
+    .paused #pause {
+        font-size: 0;
+    }
+
+    .paused #play {
+        font-size: 3em;
+        transform: scale(1.1);
+    }
+    </style>
+</head>
+
+<body id="wrapper">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <!-- Title -->
+                <span class="mdl-layout-title">Material Player</span>
+                <!-- Add spacer, to align navigation to the right -->
+                <div class="mdl-layout-spacer"></div>
+                <!-- Navigation. We hide it in small screens. -->
+                <!--                <nav class="mdl-navigation mdl-layout--large-screen-only">
+                    <a class="mdl-navigation__link" href="">Link</a>
+                    <a class="mdl-navigation__link" href="">Link</a>
+                    <a class="mdl-navigation__link" href="">Link</a>
+                    <a class="mdl-navigation__link" href="">Link</a>
+                </nav> -->
+            </div>
+        </header>
+        <main class="mdl-layout__content">
+            <div class="page-content">
+                <table id="playlist" class="mdl-data-table mdl-shadow--2dp">
+                    <tr>
+                        <td style="text-align: center">Drop files here to play it!</td>
+                    </tr>
+                </table>
+            </div>
+        </main>
+        <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000">
+        <div>
+            <input type="file" id="fileselect" name="fileselect[]" multiple="multiple">
+        </div>
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <i class="material-icons">add</i>
+        </button>
+        <footer id="footer" class="paused">
+            <div id="time">00:00 / 00:00</div>
+            <input id="slider" class="mdl-slider mdl-js-slider" type="range" min="0" max="100" value="0" tabindex="0">
+            <a id="previous" class="material-icons">skip_previous</a>
+            <a id="play" class="material-icons">play_arrow</a>
+            <a id="pause" class="material-icons">pause</a>
+            <a id="next" class="material-icons">skip_next</a>
+            <audio id="player" controls autoplay></audio>
+        </footer>
+    </div>
+    <script src="assets/js/id3.min.js"></script>
+    <script>
+    (function() {
+
+        function $id(id) {
+            return document.getElementById(id);
+        }
+
+        function $class(name) {
+            return Array.prototype.slice.call(document.getElementsByClassName(name));
+        }
+
+        function renderPlaylist(e) {
+            counter = 0;
+            content = `
+                <tr>
+                    <th>No</th>
+                    <th>Artist</th>
+                    <th>Album</th>
+                    <th>Title</th>
+                </tr>`;
+            var files = e.target.files || e.dataTransfer.files;
+            for (var i = 0, f; f = files[i]; i++) {
+                parseFile(f);
+            }
+            setTimeout(function() {
+                $id('playlist').innerHTML = content;
+                addEvent();
+            }, 250);
+        }
+
+        var counter = 0;
+        var content = localStorage.getItem('playlist') || '';
+
+        function parseFile(file) {
+            var blob = URL.createObjectURL(file);
+            id3(file, function(error, tags) {
+                var number = counter += 1;
+                content += `<tr class="track" data-src="${blob}">
+                        <td>${number}</td>
+                        <td>${tags.artist}</td>
+                        <td>${tags.album}</td>
+                        <td>${tags.title}</td>
+                    </tr>`;
+            });
+        }
+
+        function addEvent() {
+            var tracks = $class('track');
+            tracks.forEach(function(track, index) {
+                var blob = track.dataset.src;
+                track.addEventListener('click', function() {
+                    var active = $class('active')[0];
+                    if (active) {
+                        active.className = 'track'
+                    }
+                    $id('player').src = blob;
+                    this.className = 'track active';
+                }, false);
+            });
+            tracks[0].click();
+            // saveToLocalStorage(content);
+        }
+
+        function saveToLocalStorage(content) {
+            localStorage.playlist = content;
+        }
+
+
+        function init() {
+
+            var fileselect = $id("fileselect"),
+                filedrag = $id("wrapper"),
+                submitbutton = $id("submitbutton");
+
+            // file select
+            fileselect.addEventListener("change", renderPlaylist, false);
+
+            // is XHR2 available?
+            var xhr = new XMLHttpRequest();
+
+            if (xhr.upload) {
+                filedrag.addEventListener("drop", renderPlaylist, false);
+                filedrag.style.display = "block";
+            }
+
+        }
+
+        function seek(event) {
+            seekto = $id('player').duration * ($id('slider').value / 100);
+            $id('player').currentTime = seekto;
+        }
+
+        function formatTime(seconds) {
+            minutes = Math.floor(seconds / 60);
+            minutes = (minutes >= 10) ? minutes : "0" + minutes;
+            seconds = Math.floor(seconds % 60);
+            seconds = (seconds >= 10) ? seconds : "0" + seconds;
+            return minutes + ":" + seconds;
+        }
+        if (window.File && window.FileList && window.FileReader) {
+            window.ondragover = function(e) {
+                e.preventDefault();
+                return false
+            };
+            window.ondrop = function(e) {
+                e.preventDefault();
+                return false
+            };
+            $id('player').addEventListener('ended', function() {
+                $class('active')[0].nextSibling.click();
+            });
+            $id('play').addEventListener('click', function() {
+                if ($id('player').src) {
+                    $id('player').play();
+                } else {
+                    if ($class('track')) {
+                        $class('track')[0].click();
+                    }
+                }
+            });
+            $id('pause').addEventListener('click', function() {
+                $id('player').pause();
+            });
+            $id('previous').addEventListener('click', function() {
+                if ($class('active')) {
+                    if ($class('active')[0].previousSibling) {
+                        $class('active')[0].previousSibling.click();
+                    }
+                }
+            }, false);
+            $id('next').addEventListener('click', function() {
+                if ($class('active')) {
+                    if ($class('active')[0].nextSibling) {
+                        $class('active')[0].nextSibling.click();
+                    }
+                }
+            }, false);
+            var seeking;
+            $id('player').onpause = function() {
+                $id('footer').className = 'paused';
+            }
+            $id('player').onplay = function() {
+                $id('footer').className = 'played';
+            }
+            $id('player').ontimeupdate = function() {
+                var that = this;
+                var value = (that.currentTime / that.duration) * 100;
+                $id('slider').MaterialSlider.change(value);
+                $id('time').innerHTML = formatTime(that.currentTime) + ' / ' + formatTime(that.duration);
+            }
+            $id('slider').addEventListener("input", function(event) {
+                seek(event);
+            });
+            $id('slider').addEventListener("change", function(event) {
+                seek(event);
+            });
+            init();
+        }
+
+
+    })();
+    </script>
+</body>
+
+</html>
