@@ -55,7 +55,7 @@
     function setupWindowEvents() {
         window.ondragover = preventDefault;
         window.ondrop = preventDefault;
-        // window.oncontextmenu = preventDefault;
+        window.oncontextmenu = preventDefault;
         window.onhashchange = hashListener;
     }
 
@@ -79,21 +79,21 @@
     function setupDialog() {
         var dialog = document.querySelector('dialog');
         var showDialogButton = document.querySelector('#show-dialog');
+        var $local = $id('local');
+        var $close = dialog.querySelector('.close');
         if (!dialog.showModal) {
             dialogPolyfill.registerDialog(dialog);
         }
         showDialogButton.addEventListener('click', function () {
             dialog.showModal();
         });
-        dialog.querySelector('.close')
-            .addEventListener('click', function () {
-                dialog.close();
-            });
-        $id('local')
-            .onclick = function () {
-                $id('fileselect')
-                    .click();
-            };
+        $close.addEventListener('click', function () {
+            dialog.close();
+        });
+        $local.onclick = function () {
+            $id('fileselect')
+                .click();
+        };
     }
 
     function renderPlaylist() {
@@ -121,25 +121,11 @@
                 break;
             default:
                 if (!index) {
-                    content = `
-                        <tr>
-                            <th>No</th>
-                            <th>Artist</th>
-                            <th>Album</th>
-                            <th>Title</th>
-                        </tr>
-                    `;
+                    content = "<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th</tr>";
                 }
                 id3(file, function (error, tags) {
                     var number = counter += 1;
-                    content += `
-                                <tr class="track" data-src="${blob}">
-                                    <td>${number}</td>
-                                    <td>${tags.artist||''}</td>
-                                    <td>${tags.album||''}</td>
-                                    <td>${tags.title||file.name}</td>
-                                </tr>
-                            `;
+                    content += '<tr class="track" data-src="' + blob + '">' + '<td>' + number + '</td>' + '<td>' + (tags.artist || '') + '</td>' + '<td>' + (tags.album || '') + '</td>' + '<td>' + (tags.title || file.name) + '</td>' + '</tr>';
                 });
                 break;
         }
