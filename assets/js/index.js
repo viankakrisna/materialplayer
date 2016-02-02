@@ -33,7 +33,9 @@
         $tag('a')
             .forEach(function (a) {
                 a.addEventListener('click', function (e) {
-                    window.location.hash = this.getAttribute('href');
+                    if (this.getAttribute('href')) {
+                        window.location.hash = this.getAttribute('href');
+                    }
                 }, false);
             });
     }
@@ -41,8 +43,8 @@
     function setupFileEvents() {
         var fileselect = $id("fileselect");
         var filedrag = $id("wrapper");
-        fileselect.addEventListener("change", renderPlaylist, false);
-        filedrag.addEventListener("drop", renderPlaylist, false);
+        fileselect.addEventListener("change", loopFiles, false);
+        filedrag.addEventListener("drop", loopFiles, false);
     }
 
     function setupWindowEvents() {
@@ -58,6 +60,8 @@
                 $id('wrapper')
                     .className = 'on-now-playing';
                 break;
+            case '#about':
+
             default:
                 $id('wrapper')
                     .className = '';
@@ -89,43 +93,53 @@
             }
     }
 
-    function renderPlaylist(e) {
-        var files = e.target.files || e.dataTransfer.files;
-        counter = 0;
-        content = `
-                <tr>
-                    <th>No</th>
-                    <th>Artist</th>
-                    <th>Album</th>
-                    <th>Title</th>
-                </tr>
-            `;
+    function renderPlaylist() {
         $id('playlist-view')
-            .innerHTML = '<div class="mdl-spinner mdl-js-spinner is-active"></div>';
-        toArray(files)
-            .forEach(function (file) {
-                parseFile(file)
-            });
-        setTimeout(function () {
-            $id('playlist-view')
-                .innerHTML = content;
-            addEvent();
-        }, 250);
+            .innerHTML = content;
+        addEvent();
     }
 
-    function parseFile(file) {
+    function loopFiles(e) {
+        var files = e.target.files || e.dataTransfer.files;
+        counter = 0;
+        toArray(files)
+            .forEach(parseFile);
+        setTimeout(renderPlaylist, 250);
+    }
+
+    function parseFile(file, index) {
         var blob = URL.createObjectURL(file);
-        id3(file, function (error, tags) {
-            var number = counter += 1;
-            content += `
-                    <tr class="track" data-src="${blob}">
-                        <td>${number}</td>
-                        <td>${tags.artist||''}</td>
-                        <td>${tags.album||''}</td>
-                        <td>${tags.title||file.name}</td>
-                    </tr>
-                `;
-        });
+        var fileNameArr = file.name.split('.');
+        var extension = fileNameArr[fileNameArr.length - 1];
+        switch (extension) {
+            case 'srt':
+                $id('subtitle')
+                    .src = blob;
+                break;
+            default:
+                if (!index) {
+                    content = `
+                        <tr>
+                            <th>No</th>
+                            <th>Artist</th>
+                            <th>Album</th>
+                            <th>Title</th>
+                        </tr>
+                    `;
+                }
+                id3(file, function (error, tags) {
+                    var number = counter += 1;
+                    content += `
+                                <tr class="track" data-src="${blob}">
+                                    <td>${number}</td>
+                                    <td>${tags.artist||''}</td>
+                                    <td>${tags.album||''}</td>
+                                    <td>${tags.title||file.name}</td>
+                                </tr>
+                            `;
+                });
+                break;
+        }
     }
 
     function addEvent() {

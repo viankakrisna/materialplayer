@@ -14,10 +14,9 @@
 
     #nowplaying {
         position: fixed;
-        top: 0;
-        bottom: 0;
         left: 0;
         right: 0;
+        top: 0;
     }
 
     #info {
@@ -64,10 +63,10 @@
     #player {
         margin: auto;
         position: fixed;
-        top: 0;
         left: 0;
         right: 0;
-        bottom: 0;
+        width: 100%;
+        height: 100%;
     }
 
     .mdl-button--fab {
@@ -148,7 +147,9 @@
                 <div class="page-content">
                     <table id="playlist-view" class="mdl-data-table mdl-shadow--2dp">
                         <tr>
-                            <td style="text-align: center">Drop files here to play it!</td>
+                            <td>
+                                <h2 style="text-align: center; line-height: 3em">Drop files here to play!</h2>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -165,15 +166,17 @@
             </section>
             <section class="mdl-layout__tab-panel" id="nowplaying">
                 <div class="page-content">
-                    <video id="player" autoplay></video>
+                    <video id="player" autoplay>
+                        <track id="subtitle" kind="subtitles" default>
+                    </video>
                 </div>
             </section>
         </main>
         <div class="mdl-layout__drawer">
             <span class="mdl-layout-title">Material Player</span>
             <nav class="mdl-navigation">
-                <a class="mdl-navigation__link" href="#account">Account</a>
                 <a class="mdl-navigation__link" href="#about">About</a>
+                <a class="mdl-navigation__link" href="#license">License</a>
             </nav>
         </div>
         <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000">
@@ -182,7 +185,7 @@
         </div>
         <footer id="footer" class="paused">
             <div id="info">
-                <em id="currenttrack">No song currently played.</em>
+                <em id="currenttrack">No media.</em>
                 <span id="time">(00:00 / 00:00)</span>
             </div>
             <input id="slider" class="mdl-slider mdl-js-slider" type="range" min="0" max="100" value="0" tabindex="0">
@@ -190,6 +193,8 @@
             <a id="play" class="material-icons">play_arrow</a>
             <a id="pause" class="material-icons">pause</a>
             <a id="next" class="material-icons">skip_next</a>
+            <a id="shuffle" class="material-icons">shuffle</a>
+            <a id="mute" class="material-icons">mute</a>
             <button id="show-dialog" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
                 <i class="material-icons">add</i>
             </button>
