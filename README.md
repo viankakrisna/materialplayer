@@ -1,2 +1,6 @@
 # Material Player
-Multimedia player for browser, material designed.
+
+This is a multimedia player for browsers.
+Created using Google's Material Design Lite CSS Framework.
+
+
