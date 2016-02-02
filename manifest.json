@@ -1,0 +1,14 @@
+{
+  "name": "Material Music Player",
+  "description": "Music player for browser. Material designed.",
+  "version": "1.0.0",
+  "app": {
+    "launch": {
+      "local_path": "index.html"
+    }
+  },
+  "icons": {
+    "16": "icon_16.png",
+    "128": "icon_128.png"
+  }
+}

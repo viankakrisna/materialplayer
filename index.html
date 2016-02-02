@@ -210,9 +210,9 @@
 
         function init() {
 
-            var fileselect = $id("fileselect"),
-                filedrag = $id("wrapper"),
-                submitbutton = $id("submitbutton");
+            var fileselect = $id("fileselect");
+            var filedrag = $id("wrapper");
+            var submitbutton = $id("submitbutton");
 
             // file select
             fileselect.addEventListener("change", renderPlaylist, false);
@@ -233,9 +233,9 @@
         }
 
         function formatTime(seconds) {
-            minutes = Math.floor(seconds / 60);
-            minutes = (minutes >= 10) ? minutes : "0" + minutes;
+            var minutes = Math.floor(seconds / 60);
             seconds = Math.floor(seconds % 60);
+            minutes = (minutes >= 10) ? minutes : "0" + minutes;
             seconds = (seconds >= 10) ? seconds : "0" + seconds;
             return minutes + ":" + seconds;
         }
@@ -248,9 +248,13 @@
                 e.preventDefault();
                 return false
             };
+            //Play next song in the playlist on song ended
             $id('player').addEventListener('ended', function() {
-                $class('active')[0].nextSibling.click();
+                if ($class('active')[0].nextSibling){
+                    $class('active')[0].nextSibling.click();
+                }
             });
+            //Play if have source, click first song in playlist if not
             $id('play').addEventListener('click', function() {
                 if ($id('player').src) {
                     $id('player').play();
@@ -260,9 +264,11 @@
                     }
                 }
             });
+            //Well, pause the player
             $id('pause').addEventListener('click', function() {
                 $id('player').pause();
             });
+            //Click the previous sibling if it has
             $id('previous').addEventListener('click', function() {
                 if ($class('active')) {
                     if ($class('active')[0].previousSibling) {
@@ -270,6 +276,7 @@
                     }
                 }
             }, false);
+            //Click the next sibling if it has
             $id('next').addEventListener('click', function() {
                 if ($class('active')) {
                     if ($class('active')[0].nextSibling) {
@@ -277,7 +284,6 @@
                     }
                 }
             }, false);
-            var seeking;
             $id('player').onpause = function() {
                 $id('footer').className = 'paused';
             }
