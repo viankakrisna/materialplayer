@@ -1,2 +1,2 @@
-# Material-Music-Player
-Music player for browser, material designed.
+# Material Player
+Multimedia player for browser, material designed.
