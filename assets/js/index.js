@@ -1,16 +1,162 @@
 (function () {
     var counter = 0;
     var content = '';
+    var driveTable = '';
+    var folderId = 0;
+    var CLIENT_ID;
+    var SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
+    /**
+     * Check if current user has authorized this application.
+     */
+    function checkAuth() {
+        gapi.auth.authorize({
+            'client_id': CLIENT_ID,
+            'scope': SCOPES.join(' '),
+            'immediate': true
+        }, handleAuthResult);
+    }
+    /**
+     * Handle response from authorization server.
+     *
+     * @param {Object} authResult Authorization result.
+     */
+    function handleAuthResult(authResult) {
+        var authorizeDiv = document.getElementById('authorize-div');
+        if (authResult && !authResult.error) {
+            // Hide auth UI, then load client library.
+            authorizeDiv.style.display = 'none';
+            loadDriveApi();
+        } else {
+            // Show auth UI, allowing the user to initiate authorization by
+            // clicking authorize button.
+            authorizeDiv.style.display = 'inline';
+        }
+    }
+    /**
+     * Initiate auth flow in response to user clicking authorize button.
+     *
+     * @param {Event} event Button click event.
+     */
+    function handleAuthClick(event) {
+        gapi.auth.authorize({
+            client_id: CLIENT_ID,
+            scope: SCOPES,
+            immediate: false
+        }, handleAuthResult);
+        return false;
+    }
+    /**
+     * Load Drive API client library.
+     */
+    function loadDriveApi(folder) {
+        if (folder) {
+            gapi.client.load('drive', 'v3', listFolders);
+        } else {
+            gapi.client.load('drive', 'v3', listFiles);
+        }
+    }
+
+    function listFolders() {
+        var request = gapi.client.drive.files.list({
+            'q': '"' + folderId + '" in parents',
+            'pageSize': 100,
+            'fields': "nextPageToken, files(id, name)"
+        });
+        request.execute(function (resp) {
+            var files = resp.files;
+            driveTable = '';
+            if (files && files.length > 0) {
+                files.forEach(createDriveTable);
+            } else {
+                createDriveTable({
+                    name: 'No files found.'
+                });
+            }
+            renderDriveTable();
+        });
+    }
+    /**
+     * Print files.
+     */
+    function listFiles() {
+        var request = gapi.client.drive.files.list({
+            'q': "mimeType = 'application/vnd.google-apps.folder'" + ' and name contains "' + $id('searchdrive')
+                .value + '"',
+            'pageSize': 10,
+            'fields': "nextPageToken, files(id, name)"
+        });
+        request.execute(function (resp) {
+            var files = resp.files;
+            driveTable = '';
+            if (files && files.length > 0) {
+                files.forEach(createDriveTable);
+            } else {
+                createDriveTable({
+                    name: 'No files found.'
+                });
+            }
+            renderDriveTable();
+        });
+    }
+
+    function renderDriveTable() {
+        $id('drive')
+            .innerHTML = driveTable;
+        [].forEach.call($id('drive')
+            .getElementsByTagName('tr'),
+            function (element) {
+                element.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    loadDriveApi(true);
+                    folderId = e.target.dataset.id;
+                }, false);
+            });
+        [].forEach.call($id('drive')
+            .getElementsByTagName('button'),
+            function (element) {
+                element.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    gapi.client.drive.files.get({
+                            fileId: e.target.dataset.id,
+                            alt: 'media'
+                        })
+                        .execute(function (resp) {
+                            console.log(resp);
+                            $id('player')
+                                .src = resp.webContentLink
+                        });
+                }, false);
+            });
+    }
+    /**
+     * Append a pre element to the body containing the given message
+     * as its text node.
+     *
+     * @param {string} message Text to be placed in pre element.
+     */
+    function createDriveTable(file, index) {
+        var driveRow = `
+                <tr><td data-id="${file.id}">${file.name}</td><td><button class="mdl-button" data-id="${file.id}">Play This</button></td></tr>
+            `
+        driveTable += driveRow;
+    }
 
     function init() {
+        checkAuth();
         setupClickEvents();
         setupWindowEvents();
         setupFileEvents();
         setupPlayer();
-        setupDialog();
+        setupDialog('picksource');
         if (window.location.hash) {
             window.location.hash = '';
         }
+        $id('loader')
+            .style.transform = 'translateY(-200%)';
+        $id('searchdrive')
+            .onkeyup = function () {
+                loadDriveApi();
+            }
     }
 
     function $id(id) {
@@ -38,6 +184,8 @@
                     }
                 }, false);
             });
+        $id('authorize-button')
+            .addEventListener('click', handleAuthClick, false);
     }
 
     function setupFileEvents() {
@@ -61,7 +209,6 @@
                     .className = 'on-now-playing';
                 break;
             case '#about':
-
             default:
                 $id('wrapper')
                     .className = '';
@@ -73,9 +220,9 @@
         return Array.prototype.slice.call(arraylike);
     }
 
-    function setupDialog() {
-        var dialog = document.querySelector('dialog');
-        var showDialogButton = document.querySelector('#show-dialog');
+    function setupDialog(id) {
+        var dialog = $id(id);
+        var showDialogButton = document.querySelector('[href="#' + id + '"]');
         if (!dialog.showModal) {
             dialogPolyfill.registerDialog(dialog);
         }
@@ -258,7 +405,7 @@
         e.preventDefault();
     }
     if (window.File && window.FileList && window.FileReader) {
-        init();
+        window.onload = init;
     }
 })();
 

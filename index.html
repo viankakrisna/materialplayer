@@ -44,11 +44,11 @@
         bottom: 0;
         left: 0;
         right: 0;
-        z-index: 99;
         text-align: center;
         background: #212121;
         color: white;
         padding: 1.5em 0;
+        z-index: 1;
     }
 
     #footer a {
@@ -122,10 +122,29 @@
     .on-now-playing footer:hover {
         opacity: 1;
     }
+
+    #loader {
+        line-height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: white;
+        color: black;
+        z-index: 999999;
+        text-align: center;
+        text-transform: uppercase;
+        font-family: 'Roboto Mono', monospace;
+        transition: 2s;
+    }
     </style>
 </head>
 
 <body id="wrapper">
+    <div id="loader" class="mdl-shadow--8dp">
+        Loading...
+    </div>
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
         <header class="mdl-layout__header">
             <div class="mdl-layout__header-row">
@@ -135,6 +154,7 @@
             <!-- Tabs -->
             <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
                 <a href="#playlist" class="mdl-layout__tab is-active">Playlist</a>
+                <a href="#googledrive" class="mdl-layout__tab">Google Drive</a>
                 <!-- <a href="#visualizer" class="mdl-layout__tab">Visualizer</a> -->
                 <!-- <a href="#library" class="mdl-layout__tab">Library</a> -->
                 <a href="#nowplaying" class="mdl-layout__tab">Now Playing</a>
@@ -172,8 +192,28 @@
                     </video>
                 </div>
             </section>
-            <section class="mdl-layout__tab-panel" id="about">
+            <section class="mdl-layout__tab-panel" id="googledrive">
                 <div class="page-content">
+                    <div id="authorize-div" style="display: none">
+                        <span>Authorize access to Drive API</span>
+                        <!--Button for the user to click to initiate auth sequence -->
+                        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+                            <button id="authorize-button" class="mdl-button">
+                                Authorize
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mdl-grid">
+                        <div class="mdl-cell mdl-cell--4-col"></div>
+                        <div class="mdl-cell mdl-cell--4-col">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" id="searchdrive">
+                                <label class="mdl-textfield__label" for="searchdrive">Search Google Drive</label>
+                            </div>
+                        </div>
+                        <div class="mdl-cell mdl-cell--4-col"></div>
+                    </div>
+                    <table id="drive" class="mdl-data-table mdl-shadow--2dp"></table>
                 </div>
             </section>
         </main>
@@ -182,6 +222,7 @@
             <nav class="mdl-navigation">
                 <a class="mdl-navigation__link" href="http://github.com/viankakrisna/Material-Player" target="__blank">About</a>
                 <a class="mdl-navigation__link" href="#license">License</a>
+                <a href="#authorize" class="mdl-navigation__link">Authorize</a>
             </nav>
         </div>
         <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000">
@@ -200,11 +241,11 @@
             <a id="next" class="material-icons">skip_next</a>
             <!-- <a id="shuffle" class="material-icons">shuffle</a> -->
             <!-- <a id="mute" class="material-icons">mute</a> -->
-            <button id="show-dialog" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+            <button href="#picksource" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
                 <i class="material-icons">add</i>
             </button>
         </footer>
-        <dialog class="mdl-dialog">
+        <dialog id="picksource" class="mdl-dialog">
             <div class="mdl-dialog__content">
                 <p>
                     Where do you want to play your music from?
@@ -218,6 +259,7 @@
     </div>
     <script src="//code.getmdl.io/1.1.0/material.min.js"></script>
     <script src="assets/js/id3.min.js"></script>
+    <script src="//apis.google.com/js/client.js"></script>
     <script src="assets/js/index.js"></script>
 </body>
 
