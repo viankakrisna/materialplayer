@@ -1,4 +1,5 @@
 (function () {
+    'use strict';
     var counter = 0;
     var content = '';
 
@@ -8,6 +9,10 @@
         setupFileEvents();
         setupPlayer();
         setupDialog();
+        resetHash();
+    }
+
+    function resetHash() {
         if (window.location.hash) {
             window.location.hash = '';
         }
@@ -30,14 +35,14 @@
     }
 
     function setupClickEvents() {
-        $tag('a')
-            .forEach(function (a) {
-                a.addEventListener('click', function (e) {
-                    if (this.getAttribute('href')) {
-                        window.location.hash = this.getAttribute('href');
-                    }
-                }, false);
-            });
+        var as = $tag('a');
+        as.forEach(function (a) {
+            a.addEventListener('click', function (e) {
+                if (this.getAttribute('href')) {
+                    window.location.hash = this.getAttribute('href');
+                }
+            }, false);
+        });
     }
 
     function setupFileEvents() {
@@ -60,8 +65,6 @@
                 $id('wrapper')
                     .className = 'on-now-playing';
                 break;
-            case '#about':
-
             default:
                 $id('wrapper')
                     .className = '';
@@ -90,7 +93,7 @@
             .onclick = function () {
                 $id('fileselect')
                     .click();
-            }
+            };
     }
 
     function renderPlaylist() {
@@ -149,7 +152,7 @@
             track.addEventListener('click', function () {
                 var active = $class('active')[0];
                 if (active) {
-                    active.className = 'track'
+                    active.className = 'track';
                 }
                 $id('player')
                     .src = blob;
@@ -183,8 +186,8 @@
         //Play next song in the playlist-view on song ended
         $id('player')
             .addEventListener('ended', function () {
-                if ($class('active')[0].nextSibling) {
-                    $class('active')[0].nextSibling.click();
+                if ($class('active')[0].nextElementSibling) {
+                    $class('active')[0].nextElementSibling.click();
                 }
             });
         //Play if have source, click first song in playlist-view if not
@@ -210,8 +213,8 @@
         $id('previous')
             .addEventListener('click', function () {
                 if ($class('active')) {
-                    if ($class('active')[0].previousSibling) {
-                        $class('active')[0].previousSibling.click();
+                    if ($class('active')[0].previousElementSibling) {
+                        $class('active')[0].previousElementSibling.click();
                     }
                 }
             }, false);
@@ -219,8 +222,8 @@
         $id('next')
             .addEventListener('click', function () {
                 if ($class('active')) {
-                    if ($class('active')[0].nextSibling) {
-                        $class('active')[0].nextSibling.click();
+                    if ($class('active')[0].nextElementSibling) {
+                        $class('active')[0].nextElementSibling.click();
                     }
                 }
             }, false);
@@ -228,14 +231,14 @@
             .onpause = function () {
                 $id('footer')
                     .className = 'paused';
-            }
+            };
         $id('player')
             .onplay = function () {
                 $id('footer')
                     .className = 'played';
                 $id('currenttrack')
-                    .innerHTML = $class('active')[0].innerText
-            }
+                    .innerHTML = $class('active')[0].innerText;
+            };
         $id('player')
             .ontimeupdate = function () {
                 var value = (this.currentTime / this.duration) * 100;
@@ -243,7 +246,7 @@
                     .MaterialSlider.change(value);
                 $id('time')
                     .innerHTML = '(' + formatTime(this.currentTime) + ' / ' + formatTime(this.duration) + ')';
-            }
+            };
         $id('slider')
             .addEventListener("input", function (event) {
                 seek(event);
