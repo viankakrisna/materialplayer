@@ -10,6 +10,7 @@
         setupPlayer();
         setupDialog();
         resetHash();
+        contextMenu();
     }
 
     function resetHash() {
@@ -59,16 +60,32 @@
         window.onhashchange = hashListener;
     }
 
+    function contextMenu() {
+        var taskItems = $q("a");
+        for (var i = 0, len = taskItems.length; i < len; i++) {
+            var taskItem = taskItems[i];
+            contextMenuListener(taskItem);
+        }
+    }
+
+    function contextMenuListener(el) {
+        el.addEventListener("contextmenu", function (e) {
+            console.log(e, el);
+            $id('contextmenu')
+                .style = "display: block; position: fixed; top: " + e.clientY + "px; left: " + e.clientXt + "px";
+        });
+    }
+
     function hashListener() {
         switch (window.location.hash) {
-            case '#nowplaying':
-                $id('wrapper')
-                    .className = 'on-now-playing';
-                break;
-            default:
-                $id('wrapper')
-                    .className = '';
-                break;
+        case '#nowplaying':
+            $id('wrapper')
+                .className = 'on-now-playing';
+            break;
+        default:
+            $id('wrapper')
+                .className = '';
+            break;
         }
     }
 
@@ -115,19 +132,19 @@
         var fileNameArr = file.name.split('.');
         var extension = fileNameArr[fileNameArr.length - 1];
         switch (extension) {
-            case 'srt':
-                $id('subtitle')
-                    .src = blob;
-                break;
-            default:
-                if (!index) {
-                    content = "<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th</tr>";
-                }
-                id3(file, function (error, tags) {
-                    var number = counter += 1;
-                    content += '<tr class="track" data-src="' + blob + '">' + '<td>' + number + '</td>' + '<td>' + (tags.artist || '') + '</td>' + '<td>' + (tags.album || '') + '</td>' + '<td>' + (tags.title || file.name) + '</td>' + '</tr>';
-                });
-                break;
+        case 'srt':
+            $id('subtitle')
+                .src = blob;
+            break;
+        default:
+            if (!index) {
+                content = "<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th</tr>";
+            }
+            id3(file, function (error, tags) {
+                var number = counter += 1;
+                content += '<tr class="track" data-src="' + blob + '">' + '<td>' + number + '</td>' + '<td>' + (tags.artist || '') + '</td>' + '<td>' + (tags.album || '') + '</td>' + '<td>' + (tags.title || file.name) + '</td>' + '</tr>';
+            });
+            break;
         }
     }
 
@@ -153,7 +170,7 @@
     }
 
     function seek(event) {
-        seekto = $id('player')
+        var seekto = $id('player')
             .duration * ($id('slider')
                 .value / 100);
         $id('player')
@@ -241,6 +258,18 @@
             .addEventListener("change", function (event) {
                 seek(event);
             });
+    }
+
+    function jsonp(url, callback) {
+        var callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+        window[callbackName] = function (data) {
+            delete window[callbackName];
+            document.body.removeChild(script);
+            callback(data);
+        };
+        var script = document.createElement('script');
+        script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
+        document.body.appendChild(script);
     }
 
     function preventDefault(e) {
