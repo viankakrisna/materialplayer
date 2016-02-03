@@ -10,7 +10,24 @@
         setupPlayer();
         setupDialog();
         resetHash();
-        contextMenu();
+        // contextMenu();
+    }
+
+    function initPicker() {
+        var picker = new FilePicker({
+            apiKey: 'AIzaSyCtkghKt38OyadfYdhm3Ybubq2JVFl-QAo',
+            clientId: '1868175267',
+            buttonEl: document.getElementById('pick'),
+            onSelect: function (fileList) {
+                createPlaylist(fileList);
+            }
+        });
+    }
+
+    function toBlob(url) {
+        jsonp(url, function () {
+            return new File(url);
+        });
     }
 
     function resetHash() {
@@ -58,6 +75,7 @@
         window.ondrop = preventDefault;
         window.oncontextmenu = preventDefault;
         window.onhashchange = hashListener;
+        window.onload = initPicker;
     }
 
     function contextMenu() {
@@ -97,15 +115,17 @@
         var dialog = document.querySelector('dialog');
         var showDialogButton = document.querySelector('#show-dialog');
         var $local = $id('local');
-        var $close = dialog.querySelector('.close');
+        var $close = toArray(dialog.querySelectorAll('.close'));
         if (!dialog.showModal) {
             dialogPolyfill.registerDialog(dialog);
         }
         showDialogButton.addEventListener('click', function () {
             dialog.showModal();
         });
-        $close.addEventListener('click', function () {
-            dialog.close();
+        $close.forEach(function (close) {
+            close.addEventListener('click', function () {
+                dialog.close();
+            });
         });
         $local.onclick = function () {
             $id('fileselect')
@@ -127,7 +147,49 @@
         setTimeout(renderPlaylist, 250);
     }
 
+    function createPlaylist(arr) {
+        arr.sort(function (a, b) {
+                if (a.title < b.title) {
+                    return -1;
+                } else if (a.title > b.title) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            })
+            .forEach(function (file, index) {
+                if (!index) {
+                    content = "<thead><tr><th>Filename</th</tr></thead>";
+                }
+                content += '<tr class="track" data-src="' + file.webContentLink + '">' + '<td>' + file.title + '</td>' + '</tr>';
+                if (index === (arr.length - 1)) {
+                    renderPlaylist();
+                }
+            });
+    }
+
     function parseFile(file, index) {
+        var blob = URL.createObjectURL(file);
+        var fileNameArr = file.name.split('.');
+        var extension = fileNameArr[fileNameArr.length - 1];
+        switch (extension) {
+        case 'srt':
+            $id('subtitle')
+                .src = blob;
+            break;
+        default:
+            if (!index) {
+                content = "<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th</tr>";
+            }
+            id3(file, function (error, tags) {
+                var number = counter += 1;
+                content += '<tr class="track" data-src="' + blob + '">' + '<td>' + number + '</td>' + '<td>' + (tags.artist || '') + '</td>' + '<td>' + (tags.album || '') + '</td>' + '<td>' + (tags.title || file.name) + '</td>' + '</tr>';
+            });
+            break;
+        }
+    }
+
+    function parseFileFromDrive(file, index) {
         var blob = URL.createObjectURL(file);
         var fileNameArr = file.name.split('.');
         var extension = fileNameArr[fileNameArr.length - 1];

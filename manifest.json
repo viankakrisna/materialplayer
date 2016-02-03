@@ -1,14 +1,27 @@
 {
-  "name": "Material Music Player",
-  "description": "Music player for browser. Material designed.",
+  "name": "Material Player",
+  "description": "Multimedia layer for browser. Material designed.",
   "version": "1.0.0",
-  "app": {
-    "launch": {
-      "local_path": "index.html"
+  "manifest_version": 2,
+  "icons": {
+    "36": "icon.png"
+  },
+  "permissions": ["file://*/*", "fileSystem"],
+  "file_handlers": {
+    "any": {
+      "extensions": ["mp3"]
     }
   },
-  "icons": {
-    "16": "icon_16.png",
-    "128": "icon_128.png"
-  }
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "sandbox": {
+    "pages": [
+    "sandbox.html"
+    ]
+  },
+  "web_accessible_resources": ["index.html"]
 }
+
