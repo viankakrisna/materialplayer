@@ -66,12 +66,12 @@
         });
     }
 
-    function downloadFile(file, index) {
-        if (file.downloadUrl) {
+    function downloadFile(fileObj, index) {
+        if (fileObj.downloadUrl) {
             var accessToken = gapi.auth.getToken()
                 .access_token;
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', file.downloadUrl);
+            xhr.open('GET', fileObj.downloadUrl);
             xhr.responseType = "blob";
             xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
             xhr.onload = function () {
