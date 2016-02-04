@@ -8,6 +8,7 @@
         <title>Material Player</title>
         <link rel="stylesheet" href="assets/css/icon.css">
         <link rel="stylesheet" href="assets/css/material.blue-pink.min.css" />
+        <link rel="icon" type="image/png" href="icon.png">
         <style>
         #fileselect {
             display: none;
@@ -207,7 +208,7 @@
                     <em id="currenttrack">No media.</em>
                     <span id="time">(00:00 / 00:00)</span>
                 </div>
-                <input id="slider" class="mdl-slider mdl-js-slider" type="range" min="0" max="100" value="0" tabindex="0">
+                <input id="slider" class="mdl-slider mdl-js-slider" type="range" min="0" max="1000000"value="0" tabindex="0">
                 <a id="previous" class="material-icons">skip_previous</a>
                 <a id="play" class="material-icons">play_arrow</a>
                 <a id="pause" class="material-icons">pause</a>
@@ -238,6 +239,7 @@
                 </ul>
             </div>
         </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <script src="https://www.google.com/jsapi?key=AIzaSyCtkghKt38OyadfYdhm3Ybubq2JVFl-QAo"></script>
         <script src="https://apis.google.com/js/client.js"></script>
         <script src="assets/js/filepicker.js"></script>

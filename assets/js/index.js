@@ -1,7 +1,31 @@
-(function () {
+(function ($) {
     'use strict';
+    //States
     var counter = 0;
-    var content = '';
+    var playlist = [];
+    var $window = $(window);
+    var $document = $(document);
+    var $wrapper = $('#wrapper');
+    var $playlistview = $('#playlist-view');
+    var $subtitle = $('#subtitle');
+    var $player = $('#player');
+    var $slider = $('#slider');
+    var $as = $('a');
+    var $contextmenu = $('#contextmenu');
+    var $fileselect = $('#fileselect');
+    var $loop = $('#loop');
+    var $play = $('#play');
+    var $pause = $('#pause');
+    var $footer = $('footer');
+    var $previous = $('#previous');
+    var $next = $('#next');
+    var $currenttrack = $('#currenttrack');
+    var $tracks = $('.track');
+    var $time = $('#time');
+    var $dialog = $('dialog');
+    var $showDialogButton = $('#show-dialog');
+    var $local = $('#local');
+    var $close = $('.close');
 
     function init() {
         setupClickEvents();
@@ -10,6 +34,7 @@
         setupPlayer();
         setupDialog();
         resetHash();
+        addEvent();
         // contextMenu();
     }
 
@@ -17,7 +42,7 @@
         var picker = new FilePicker({
             apiKey: 'AIzaSyBMDM4v6cjmt3k00QO7PAZn2MGg8hRvSv4',
             clientId: '1868175267',
-            buttonEl: document.getElementById('pick'),
+            buttonEl: $('#pick')[0],
             onSelect: function (fileList) {
                 createPlaylist(fileList);
             }
@@ -36,81 +61,49 @@
         }
     }
 
-    function $id(id) {
-        return document.getElementById(id);
-    }
-
-    function $class(name) {
-        return toArray(document.getElementsByClassName(name));
-    }
-
-    function $tag(name) {
-        return toArray(document.getElementsByTagName(name));
-    }
-
-    function $q(name) {
-        return toArray(document.querySelectorAll(name));
-    }
-
     function setupClickEvents() {
-        var as = $tag('a');
-        as.forEach(function (a) {
-            a.addEventListener('click', function (e) {
-                if (this.getAttribute('href')) {
-                    window.location.hash = this.getAttribute('href');
-                }
-            }, false);
+        $as.on('click', function () {
+            if (this.getAttribute('href')) {
+                window.location.hash = this.getAttribute('href');
+            }
         });
-        $id('loop')
-            .addEventListener('click', function (e) {
-                if (this.classList.contains('active')) {
-                    this.classList.remove('active');
-                } else {
-                    this.classList.add('active');
-                }
-            });
+        $loop.on('click', function () {
+            var $this = $(this);
+            $this.toggleClass('active');
+        });
     }
 
     function setupFileEvents() {
-        var fileselect = $id("fileselect");
-        var filedrag = $id("wrapper");
-        fileselect.addEventListener("change", loopFiles, false);
-        filedrag.addEventListener("drop", loopFiles, false);
+        $fileselect.on("change", loopFiles);
+        $wrapper.on("drop", loopFiles);
     }
 
     function setupWindowEvents() {
         window.ondragover = preventDefault;
         window.ondrop = preventDefault;
-        window.oncontextmenu = preventDefault;
+        // window.oncontextmenu = preventDefault;
         window.onhashchange = hashListener;
         window.onload = initPicker;
     }
 
     function contextMenu() {
-        var taskItems = $q("a");
-        for (var i = 0, len = taskItems.length; i < len; i++) {
-            var taskItem = taskItems[i];
-            contextMenuListener(taskItem);
-        }
-    }
-
-    function contextMenuListener(el) {
-        el.addEventListener("contextmenu", function (e) {
-            console.log(e, el);
-            $id('contextmenu')
-                .style = "display: block; position: fixed; top: " + e.clientY + "px; left: " + e.clientXt + "px";
+        $as.on("contextmenu", function (e) {
+            $contextmenu.css({
+                display: "block",
+                position: "fixed",
+                top: e.clientY,
+                left: e.clientX
+            });
         });
     }
 
     function hashListener() {
         switch (window.location.hash) {
         case '#nowplaying':
-            $id('wrapper')
-                .className = 'on-now-playing';
+            $wrapper.addClass('on-now-playing');
             break;
         default:
-            $id('wrapper')
-                .className = '';
+            $wrapper.removeClass('on-now-playing');
             break;
         }
     }
@@ -120,131 +113,130 @@
     }
 
     function setupDialog() {
-        var dialog = document.querySelector('dialog');
-        var showDialogButton = document.querySelector('#show-dialog');
-        var $local = $id('local');
-        var $close = toArray(dialog.querySelectorAll('.close'));
-        if (!dialog.showModal) {
-            dialogPolyfill.registerDialog(dialog);
-        }
-        showDialogButton.addEventListener('click', function () {
-            dialog.showModal();
+        $dialog.each(function (index, dialog) {
+            if (!dialog.showModal) {
+                dialogPolyfill.registerDialog(dialog);
+            }
         });
-        $close.forEach(function (close) {
-            close.addEventListener('click', function () {
-                dialog.close();
+        $showDialogButton.on('click', function () {
+            $dialog.each(function () {
+                this.showModal();
             });
         });
-        $local.onclick = function () {
-            $id('fileselect')
-                .click();
-        };
+        $close.on('click', function () {
+            $dialog.each(function () {
+                this.close();
+            });
+        });
+        $local.on('click', function () {
+            $fileselect.click();
+        });
     }
 
     function renderPlaylist() {
-        $id('playlist-view')
-            .innerHTML = content;
-        addEvent();
+        $playlistview.html(playlist.join(''));
     }
 
     function loopFiles(e) {
-        var files = e.target.files || e.dataTransfer.files;
+        e = e.originalEvent;
+        var files = e.target.files || (e.dataTransfer && e.dataTransfer.files);
+        var fileArray = toArray(files);
         counter = 0;
-        toArray(files)
-            .forEach(parseFile);
+        fileArray.forEach(parseFile);
         setTimeout(renderPlaylist, 250);
     }
 
     function createPlaylist(arr) {
-        arr.sort(function (a, b) {
-                if (a.title < b.title) {
-                    return -1;
-                } else if (a.title > b.title) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            })
-            .forEach(function (file, index) {
-                if (!index) {
-                    content = "<thead><tr><th>Filename</th<th></th></tr></thead>";
-                }
-                content += '<tr class="track" data-src="' + file.webContentLink + '">' + '<td>' + file.title + '</td>' + '<td><a href="'+file.webContentLink+'" class="mdl-button">Download</a></td></tr>';
-                if (index === (arr.length - 1)) {
-                    renderPlaylist();
-                }
-            });
+        arr.sort(ascending)
+            .forEach(createPlaylistCallback);
+    }
+
+    function createPlaylistCallback(file, index) {
+        if (!index) {
+            playlist = [];
+            playlist.push("<thead><tr><th>Filename</th<th></th></tr></thead>");
+        }
+        playlist.push('<tr class="track" data-src="' + file.webContentLink + '">' + '<td class="track-file">' + file.title + '</td>' + '<td><a href="' + file.webContentLink + '" class="mdl-button">Download</a></td></tr>');
+        if (index === (arr.length - 1)) {
+            renderPlaylist();
+        }
+    }
+
+    function ascending(a, b) {
+        if (a.title < b.title) {
+            return -1;
+        } else if (a.title > b.title) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     function parseFile(file, index) {
-        var blob = URL.createObjectURL(file);
+        var url = URL.createObjectURL(file);
         var fileNameArr = file.name.split('.');
         var extension = fileNameArr[fileNameArr.length - 1];
         switch (extension) {
         case 'srt':
-            $id('subtitle')
-                .src = blob;
+            $subtitle.attr('src', url);
             break;
         default:
             if (!index) {
-                content = "<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th</tr>";
+                playlist = [];
+                playlist.push("<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th</tr>");
             }
             id3(file, function (error, tags) {
-                var number = counter += 1;
-                content += '<tr class="track" data-src="' + blob + '">' + '<td>' + number + '</td>' + '<td>' + (tags.artist || '') + '</td>' + '<td>' + (tags.album || '') + '</td>' + '<td>' + (tags.title || file.name) + '</td>' + '</tr>';
+                playlist.push(['<tr class="track" data-src="' + url + '">', '<td class="track-number">' + (++counter) + '</td>', '<td class="track-artist">' + (tags.artist || '') + '</td>', '<td class="track-album">' + (tags.album || '') + '</td>', '<td class="track-artist">' + (tags.title || file.name) + '</td>', '</tr>'].join(''));
             });
             break;
         }
     }
 
     function parseFileFromDrive(file, index) {
-        var blob = URL.createObjectURL(file);
+        var url = URL.createObjectURL(file);
         var fileNameArr = file.name.split('.');
         var extension = fileNameArr[fileNameArr.length - 1];
         switch (extension) {
         case 'srt':
-            $id('subtitle')
-                .src = blob;
+            $('#subtitle')
+                .attr('src', url);
             break;
         default:
             if (!index) {
-                content = "<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th</tr>";
+                playlist = "<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th</tr>";
             }
             id3(file, function (error, tags) {
                 var number = counter += 1;
-                content += '<tr class="track" data-src="' + blob + '">' + '<td>' + number + '</td>' + '<td>' + (tags.artist || '') + '</td>' + '<td>' + (tags.album || '') + '</td>' + '<td>' + (tags.title || file.name) + '</td>' + '</tr>';
+                playlist += '<tr class="track" data-src="' + url + '">' + '<td>' + number + '</td>' + '<td>' + (tags.artist || '') + '</td>' + '<td>' + (tags.album || '') + '</td>' + '<td>' + (tags.title || file.name) + '</td>' + '</tr>';
             });
             break;
         }
     }
 
     function addEvent() {
-        var tracks = $class('track');
-        tracks.forEach(function (track, index) {
-            var blob = track.dataset.src;
-            track.addEventListener('click', function () {
-                var active = $class('active')[0];
-                if (active) {
-                    active.className = 'track';
-                }
-                $id('player')
-                    .src = blob;
-                this.className = 'track active';
-            }, false);
+        $wrapper.on('click', '.track', function (e) {
+            var $this = $(this);
+            var url = $this.data('src');
+            $this.siblings()
+                .removeClass('active');
+            $this.addClass('active');
+            play(url);
         });
-        tracks[0].click();
+        $tracks.first()
+            .click();
     }
 
-    function saveToLocalStorage(key, content) {
-        window.localStorage[key] = content;
+    function play(url) {
+        $player.attr('src', url);
+    }
+
+    function saveToLocalStorage(key, playlist) {
+        window.localStorage[key] = playlist;
     }
 
     function seek(event) {
-        var seekto = $id('player')
-            .duration * ($id('slider')
-                .value / 100);
-        $id('player')
-            .currentTime = seekto;
+        var seekto = $player[0].duration * ($slider.val() / 100);
+        $player[0].currentTime = seekto;
     }
 
     function formatTime(seconds) {
@@ -257,84 +249,63 @@
 
     function setupPlayer() {
         //Play next song in the playlist-view on song ended
-        $id('player')
-            .addEventListener('ended', function () {
-                if ($id('loop')
-                    .classList.contains('active')) {
-                    this.pause();
-                    this.currentTime = '0';
-                    this.play();
-                } else {
-                    if ($class('active')[0].nextElementSibling) {
-                        $class('active')[0].nextElementSibling.click();
-                    }
-                }
-            });
+        $player.on('ended', function () {
+            if ($loop.hasClass('active')) {
+                this.pause();
+                this.currentTime = '0';
+                this.play();
+            } else {
+                $('.track.active')
+                    .next()
+                    .click();
+            }
+        });
         //Play if have source, click first song in playlist-view if not
-        $id('play')
-            .addEventListener('click', function () {
-                if ($id('player')
-                    .src) {
-                    $id('player')
-                        .play();
-                } else {
-                    if ($class('track')[0]) {
-                        $class('track')[0].click();
-                    }
-                }
-            });
+        $play.on('click', function () {
+            if ($player.attr('src')) {
+                $player[0].play();
+            } else {
+                $tracks.first()
+                    .click();
+            }
+        });
         //Well, pause the player
-        $id('pause')
-            .addEventListener('click', function () {
-                $id('player')
-                    .pause();
-            });
+        $pause.on('click', function () {
+            $player.pause();
+        });
         //Click the previous sibling if it has
-        $id('previous')
-            .addEventListener('click', function () {
-                if ($class('active')[0]) {
-                    if ($class('active')[0].previousElementSibling) {
-                        $class('active')[0].previousElementSibling.click();
-                    }
-                }
-            }, false);
+        $previous.on('click', function () {
+            $('.track.active')
+                .previous()
+                .click();
+        });
         //Click the next sibling if it has
-        $id('next')
-            .addEventListener('click', function () {
-                if ($class('active')[0]) {
-                    if ($class('active')[0].nextElementSibling) {
-                        $class('active')[0].nextElementSibling.click();
-                    }
-                }
-            }, false);
-        $id('player')
-            .onpause = function () {
-                $id('footer')
-                    .className = 'paused';
-            };
-        $id('player')
-            .onplay = function () {
-                $id('footer')
-                    .className = 'played';
-                $id('currenttrack')
-                    .innerHTML = $class('active')[0].innerText;
-            };
-        $id('player')
-            .ontimeupdate = function () {
-                var value = (this.currentTime / this.duration) * 100;
-                $id('slider')
-                    .MaterialSlider.change(value);
-                $id('time')
-                    .innerHTML = '(' + formatTime(this.currentTime) + ' / ' + formatTime(this.duration) + ')';
-            };
-        $id('slider')
-            .addEventListener("input", function (event) {
-                seek(event);
+        $next.on('click', function () {
+            $('.track.active')
+                .next()
+                .click();
+        });
+        $player.on('pause', function () {
+            $footer.removeClass('played');
+            $footer.addClass('paused');
+        });
+        $player.on('play', function () {
+            var currentTrack = '';
+            $footer.removeClass('paused');
+            $footer.addClass('played');
+            $('.track.active').find('td').each(function(index, info){
+                var $info = $(info);
+                currentTrack += $info.text() + ' / ';
             });
-        $id('slider')
-            .addEventListener("change", function (event) {
-                seek(event);
-            });
+            $currenttrack.html(currentTrack);
+        });
+        $player.on('timeupdate', function () {
+            var value = (this.currentTime / this.duration) * 1000000;
+            var time = '(' + formatTime(this.currentTime) + ' / ' + formatTime(this.duration) + ')';
+            $slider[0].MaterialSlider.change(value);
+            $time.html(time);
+        });
+        $slider.on("change input", seek);
     }
 
     function jsonp(url, callback) {
@@ -355,5 +326,5 @@
     if (window.File && window.FileList && window.FileReader) {
         init();
     }
-})();
+})(jQuery);
 
