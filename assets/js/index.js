@@ -52,7 +52,7 @@
                 fileList = fileList.sort(ascending);
                 fileList.forEach(parseGoogleDrive);
                 renderPlaylist();
-                // ids.forEach(getFileUrl);
+                ids.forEach(getFileUrl);
             }
         });
     }
@@ -62,9 +62,28 @@
             'fileId': fileId
         });
         request.execute(function (resp) {
-            console.log(resp);
-            readTags(resp.webContentLink, index);
+            downloadFile(resp, index);
         });
+    }
+
+    function downloadFile(file, index) {
+        if (file.downloadUrl) {
+            var accessToken = gapi.auth.getToken()
+                .access_token;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', file.downloadUrl);
+            xhr.responseType = "blob";
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.onload = function () {
+                var file = new File([xhr.response], 'blob');
+                var url = URL.createObjectURL(file);
+                var $track = $($playlistview.find('tr')[index + 1]);
+                $track.data('src', url);
+                $track.attr('data-src', url);
+                readTags(file, index);
+            };
+            xhr.send();
+        }
     }
 
     function parseGoogleDrive(file, index) {
@@ -171,6 +190,12 @@
         fileArray.forEach(readTags);
     }
 
+    function blobToFile(theBlob, fileName) {
+        theBlob.lastModifiedDate = new Date();
+        theBlob.name = fileName;
+        return theBlob;
+    }
+
     function ascending(a, b) {
         if (a[name] < b[name]) {
             return -1;
@@ -200,11 +225,13 @@
     }
 
     function readTags(file, index) {
+        var args = arguments;
         id3(file, function (error, tags) {
             var $track = $($playlistview.find('tr')[index + 1]);
             if (error) {
                 console.log(error);
             } else {
+                console.log(tags);
                 $track.find('.track-artist')
                     .html(tags.artist);
                 $track.find('.track-album')
