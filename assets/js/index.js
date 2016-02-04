@@ -148,18 +148,16 @@
 
     function createPlaylist(arr) {
         arr.sort(ascending)
-            .forEach(createPlaylistCallback);
-    }
-
-    function createPlaylistCallback(file, index) {
-        if (!index) {
-            playlist = [];
-            playlist.push("<thead><tr><th>Filename</th<th></th></tr></thead>");
-        }
-        playlist.push('<tr class="track" data-src="' + file.webContentLink + '">' + '<td class="track-file">' + file.title + '</td>' + '<td><a href="' + file.webContentLink + '" class="mdl-button">Download</a></td></tr>');
-        if (index === (arr.length - 1)) {
-            renderPlaylist();
-        }
+            .forEach(function (file, index) {
+                if (!index) {
+                    playlist = [];
+                    playlist.push("<thead><tr><th>Filename</th<th></th></tr></thead>");
+                }
+                playlist.push('<tr class="track" data-src="' + file.webContentLink + '">' + '<td class="track-file">' + file.title + '</td>' + '<td><a href="' + file.webContentLink + '" class="mdl-button">Download</a></td></tr>');
+                if (index === (arr.length - 1)) {
+                    renderPlaylist();
+                }
+            });
     }
 
     function ascending(a, b) {
@@ -293,10 +291,12 @@
             var currentTrack = '';
             $footer.removeClass('paused');
             $footer.addClass('played');
-            $('.track.active').find('td').each(function(index, info){
-                var $info = $(info);
-                currentTrack += $info.text() + ' / ';
-            });
+            $('.track.active')
+                .find('td')
+                .each(function (index, info) {
+                    var $info = $(info);
+                    currentTrack += $info.text() + ' / ';
+                });
             $currenttrack.html(currentTrack);
         });
         $player.on('timeupdate', function () {
