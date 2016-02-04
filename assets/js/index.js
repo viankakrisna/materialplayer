@@ -27,7 +27,7 @@
     var $close = $('.close');
     var $ajax = new XMLHttpRequest();
     var name = 'name';
-    var urls = [];
+    var ids = [];
     var loading = false;
 
     function init() {
@@ -48,22 +48,32 @@
             clientId: '1868175267',
             buttonEl: $('#pick')[0],
             onSelect: function (fileList) {
-                console.log(fileList);
+                // console.log(fileList);
                 fileList = fileList.sort(ascending);
                 fileList.forEach(parseGoogleDrive);
                 renderPlaylist();
-                urls.forEach(readTags);
+                // ids.forEach(getFileUrl);
             }
+        });
+    }
+
+    function getFileUrl(fileId, index) {
+        var request = gapi.client.drive.files.get({
+            'fileId': fileId
+        });
+        request.execute(function (resp) {
+            console.log(resp);
+            readTags(resp.webContentLink, index);
         });
     }
 
     function parseGoogleDrive(file, index) {
         if (!index) {
+            ids = [];
             playlist = [];
-            urls = [];
             playlist.push("<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th><th>File</th></tr>");
         }
-        urls.push('https://docs.google.com/uc?id=' + file.id + '&export=download');
+        ids.push(file.id);
         playlist.push(['<tr class="track" data-id="' + file.id + '" data-src="' + 'https://docs.google.com/uc?id=' + file.id + '&export=download' + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + file.name + '</td></tr>'].join(''));
     }
 
@@ -147,6 +157,8 @@
 
     function renderPlaylist() {
         $playlistview.html(playlist.join(''));
+        $tracks.first()
+            .click();
     }
 
     function loopFiles(e) {
@@ -212,8 +224,6 @@
             $this.addClass('active');
             play(url);
         });
-        $tracks.first()
-            .click();
     }
 
     function play(url) {
