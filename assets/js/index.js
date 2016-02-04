@@ -15,7 +15,7 @@
 
     function initPicker() {
         var picker = new FilePicker({
-            apiKey: 'AIzaSyCtkghKt38OyadfYdhm3Ybubq2JVFl-QAo',
+            apiKey: 'AIzaSyBMDM4v6cjmt3k00QO7PAZn2MGg8hRvSv4',
             clientId: '1868175267',
             buttonEl: document.getElementById('pick'),
             onSelect: function (fileList) {
@@ -61,6 +61,14 @@
                 }
             }, false);
         });
+        $id('loop')
+            .addEventListener('click', function (e) {
+                if (this.classList.contains('active')) {
+                    this.classList.remove('active');
+                } else {
+                    this.classList.add('active');
+                }
+            });
     }
 
     function setupFileEvents() {
@@ -159,9 +167,9 @@
             })
             .forEach(function (file, index) {
                 if (!index) {
-                    content = "<thead><tr><th>Filename</th</tr></thead>";
+                    content = "<thead><tr><th>Filename</th<th></th></tr></thead>";
                 }
-                content += '<tr class="track" data-src="' + file.webContentLink + '">' + '<td>' + file.title + '</td>' + '</tr>';
+                content += '<tr class="track" data-src="' + file.webContentLink + '">' + '<td>' + file.title + '</td>' + '<td><a href="'+file.webContentLink+'" class="mdl-button">Download</a></td></tr>';
                 if (index === (arr.length - 1)) {
                     renderPlaylist();
                 }
@@ -251,8 +259,15 @@
         //Play next song in the playlist-view on song ended
         $id('player')
             .addEventListener('ended', function () {
-                if ($class('active')[0].nextElementSibling) {
-                    $class('active')[0].nextElementSibling.click();
+                if ($id('loop')
+                    .classList.contains('active')) {
+                    this.pause();
+                    this.currentTime = '0';
+                    this.play();
+                } else {
+                    if ($class('active')[0].nextElementSibling) {
+                        $class('active')[0].nextElementSibling.click();
+                    }
                 }
             });
         //Play if have source, click first song in playlist-view if not
@@ -263,7 +278,7 @@
                     $id('player')
                         .play();
                 } else {
-                    if ($class('track')) {
+                    if ($class('track')[0]) {
                         $class('track')[0].click();
                     }
                 }
@@ -277,7 +292,7 @@
         //Click the previous sibling if it has
         $id('previous')
             .addEventListener('click', function () {
-                if ($class('active')) {
+                if ($class('active')[0]) {
                     if ($class('active')[0].previousElementSibling) {
                         $class('active')[0].previousElementSibling.click();
                     }
@@ -286,7 +301,7 @@
         //Click the next sibling if it has
         $id('next')
             .addEventListener('click', function () {
-                if ($class('active')) {
+                if ($class('active')[0]) {
                     if ($class('active')[0].nextElementSibling) {
                         $class('active')[0].nextElementSibling.click();
                     }

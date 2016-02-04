@@ -20,6 +20,16 @@
             top: 0;
         }
 
+        #loop {
+            opacity: 0.5;
+            transform: scale(0.5)
+        }
+
+        #loop.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
         #info {
             margin-bottom: 1em;
         }
@@ -202,6 +212,7 @@
                 <a id="play" class="material-icons">play_arrow</a>
                 <a id="pause" class="material-icons">pause</a>
                 <a id="next" class="material-icons">skip_next</a>
+                <a id="loop" class="material-icons">loop</a>
                 <!-- <a id="shuffle" class="material-icons">shuffle</a> -->
                 <!-- <a id="mute" class="material-icons">mute</a> -->
                 <button id="show-dialog" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
