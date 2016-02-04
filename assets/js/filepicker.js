@@ -64,20 +64,7 @@
 		_pickerCallback: function (data) {
 			if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
 				var files = data.docs;
-				var links = [];
-				var that = this;
-				console.log(files);
-				files.forEach(function (file, index) {
-					var request = gapi.client.drive.files.get({
-						'fileId': file.id
-					});
-					request.execute(function (resp) {
-						links.push(resp);
-						if (index === (files.length - 1)){
-							that._fileGetCallback(links);
-						}
-					});
-				});
+				this._fileGetCallback(files);
 			}
 		},
 		/**

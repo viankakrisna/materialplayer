@@ -1,7 +1,6 @@
 (function ($) {
     'use strict';
     //States
-    var counter = 0;
     var playlist = [];
     var $window = $(window);
     var $document = $(document);
@@ -26,6 +25,10 @@
     var $showDialogButton = $('#show-dialog');
     var $local = $('#local');
     var $close = $('.close');
+    var $ajax = new XMLHttpRequest();
+    var name = 'name';
+    var urls = [];
+    var loading = false;
 
     function init() {
         setupClickEvents();
@@ -35,6 +38,7 @@
         setupDialog();
         resetHash();
         addEvent();
+        loadingAnimation();
         // contextMenu();
     }
 
@@ -44,15 +48,23 @@
             clientId: '1868175267',
             buttonEl: $('#pick')[0],
             onSelect: function (fileList) {
-                createPlaylist(fileList);
+                console.log(fileList);
+                fileList = fileList.sort(ascending);
+                fileList.forEach(parseGoogleDrive);
+                renderPlaylist();
+                urls.forEach(readTags);
             }
         });
     }
 
-    function toBlob(url) {
-        jsonp(url, function () {
-            return new File(url);
-        });
+    function parseGoogleDrive(file, index) {
+        if (!index) {
+            playlist = [];
+            urls = [];
+            playlist.push("<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th><th>File</th></tr>");
+        }
+        urls.push('https://docs.google.com/uc?id=' + file.id + '&export=download');
+        playlist.push(['<tr class="track" data-id="' + file.id + '" data-src="' + 'https://docs.google.com/uc?id=' + file.id + '&export=download' + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + file.name + '</td></tr>'].join(''));
     }
 
     function resetHash() {
@@ -141,29 +153,16 @@
         e = e.originalEvent;
         var files = e.target.files || (e.dataTransfer && e.dataTransfer.files);
         var fileArray = toArray(files);
-        counter = 0;
+        fileArray = fileArray.sort(ascending);
         fileArray.forEach(parseFile);
-        setTimeout(renderPlaylist, 250);
-    }
-
-    function createPlaylist(arr) {
-        arr.sort(ascending)
-            .forEach(function (file, index) {
-                if (!index) {
-                    playlist = [];
-                    playlist.push("<thead><tr><th>Filename</th<th></th></tr></thead>");
-                }
-                playlist.push('<tr class="track" data-src="' + file.webContentLink + '">' + '<td class="track-file">' + file.title + '</td>' + '<td><a href="' + file.webContentLink + '" class="mdl-button">Download</a></td></tr>');
-                if (index === (arr.length - 1)) {
-                    renderPlaylist();
-                }
-            });
+        renderPlaylist();
+        fileArray.forEach(readTags);
     }
 
     function ascending(a, b) {
-        if (a.title < b.title) {
+        if (a[name] < b[name]) {
             return -1;
-        } else if (a.title > b.title) {
+        } else if (a[name] > b[name]) {
             return 1;
         } else {
             return 0;
@@ -181,42 +180,35 @@
         default:
             if (!index) {
                 playlist = [];
-                playlist.push("<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th</tr>");
+                playlist.push("<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th><th>File</th></tr>");
             }
-            id3(file, function (error, tags) {
-                playlist.push(['<tr class="track" data-src="' + url + '">', '<td class="track-number">' + (++counter) + '</td>', '<td class="track-artist">' + (tags.artist || '') + '</td>', '<td class="track-album">' + (tags.album || '') + '</td>', '<td class="track-artist">' + (tags.title || file.name) + '</td>', '</tr>'].join(''));
-            });
+            playlist.push(['<tr class="track" data-src="' + url + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + file.name + '</td></tr>'].join(''));
             break;
         }
     }
 
-    function parseFileFromDrive(file, index) {
-        var url = URL.createObjectURL(file);
-        var fileNameArr = file.name.split('.');
-        var extension = fileNameArr[fileNameArr.length - 1];
-        switch (extension) {
-        case 'srt':
-            $('#subtitle')
-                .attr('src', url);
-            break;
-        default:
-            if (!index) {
-                playlist = "<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th</tr>";
+    function readTags(file, index) {
+        id3(file, function (error, tags) {
+            var $track = $($playlistview.find('tr')[index + 1]);
+            if (error) {
+                console.log(error);
+            } else {
+                $track.find('.track-artist')
+                    .html(tags.artist);
+                $track.find('.track-album')
+                    .html(tags.album);
+                $track.find('.track-title')
+                    .html(tags.title);
             }
-            id3(file, function (error, tags) {
-                var number = counter += 1;
-                playlist += '<tr class="track" data-src="' + url + '">' + '<td>' + number + '</td>' + '<td>' + (tags.artist || '') + '</td>' + '<td>' + (tags.album || '') + '</td>' + '<td>' + (tags.title || file.name) + '</td>' + '</tr>';
-            });
-            break;
-        }
+        });
     }
 
     function addEvent() {
         $wrapper.on('click', '.track', function (e) {
             var $this = $(this);
             var url = $this.data('src');
-            $this.siblings()
-                .removeClass('active');
+            var $siblings = $this.siblings();
+            $siblings.removeClass('active');
             $this.addClass('active');
             play(url);
         });
@@ -226,6 +218,7 @@
 
     function play(url) {
         $player.attr('src', url);
+        loading = true;
     }
 
     function saveToLocalStorage(key, playlist) {
@@ -269,7 +262,7 @@
         });
         //Well, pause the player
         $pause.on('click', function () {
-            $player.pause();
+            $player[0].pause();
         });
         //Click the previous sibling if it has
         $previous.on('click', function () {
@@ -295,7 +288,9 @@
                 .find('td')
                 .each(function (index, info) {
                     var $info = $(info);
-                    currentTrack += $info.text() + ' / ';
+                    if (index && $info.text()) {
+                        currentTrack += $info.text() + ' - ';
+                    }
                 });
             $currenttrack.html(currentTrack);
         });
@@ -304,20 +299,21 @@
             var time = '(' + formatTime(this.currentTime) + ' / ' + formatTime(this.duration) + ')';
             $slider[0].MaterialSlider.change(value);
             $time.html(time);
+            loading = false;
         });
         $slider.on("change input", seek);
     }
 
-    function jsonp(url, callback) {
-        var callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-        window[callbackName] = function (data) {
-            delete window[callbackName];
-            document.body.removeChild(script);
-            callback(data);
-        };
-        var script = document.createElement('script');
-        script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
-        document.body.appendChild(script);
+    function loadingAnimation() {
+        function step(timestamp) {
+            if (loading) {
+                $footer.addClass('loading');
+            } else {
+                $footer.removeClass('loading');
+            }
+            window.requestAnimationFrame(step);
+        }
+        window.requestAnimationFrame(step);
     }
 
     function preventDefault(e) {
