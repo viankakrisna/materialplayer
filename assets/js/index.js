@@ -83,7 +83,7 @@
                 readTags(file, index);
             };
             xhr.onerror = function(){
-                downloadFile(fileObj, index);
+                // downloadFile(fileObj, index);
             };
             xhr.send();
         }
