@@ -22,23 +22,32 @@
     var $tracks = $('.track');
     var $time = $('#time');
     var $dialog = $('dialog');
-    var $showDialogButton = $('#show-dialog');
+    var $showFilePickerBtn = $('#show-file-picker-btn');
     var $local = $('#local');
     var $close = $('.close');
+    var $openFileDialog = $('#open-file-dialog');
+    var $showCustomizerBtn = $('#show-customizer');
+    var $customizerModal = $('#customizer');
     var $ajax = new XMLHttpRequest();
+    var $libraryview = $('#libraryview');
     var name = 'name';
     var ids = [];
     var loading = false;
+    var theme = localStorage.getItem('theme') || 'indigo-pink';
+    var font = localStorage.getItem('font') || 'Roboto';
 
     function init() {
         setupClickEvents();
         setupWindowEvents();
         setupFileEvents();
+        setupSelectEvents();
         setupPlayer();
         setupDialog();
         resetHash();
         addEvent();
         loadingAnimation();
+        setTheme(theme);
+        setFont(font);
         // contextMenu();
     }
 
@@ -82,7 +91,7 @@
                 $track.attr('data-src', url);
                 readTags(file, index);
             };
-            xhr.onerror = function(){
+            xhr.onerror = function () {
                 // downloadFile(fileObj, index);
             };
             xhr.send();
@@ -96,13 +105,24 @@
             playlist.push("<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th><th>File</th></tr>");
         }
         ids.push(file.id);
-        playlist.push(['<tr class="track" data-id="' + file.id + '" data-src="' + 'https://docs.google.com/uc?id=' + file.id + '&export=download' + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + file.name + '</td></tr>'].join(''));
+        var row = ['<tr class="track" data-id="' + file.id + '" data-src="' + 'https://docs.google.com/uc?id=' + file.id + '&export=download' + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + file.name + '</td></tr>'].join('');
+        playlist.push(row);
     }
 
     function resetHash() {
         if (window.location.hash) {
             window.location.hash = '';
         }
+    }
+
+    function saveToLibrary(id, row) {
+        var library = JSON.parse(localStorage.getItem('library')) ? JSON.parse(localStorage.getItem('library')) : [];
+        var entry = {
+            id: file.id,
+            row: row
+        };
+        library.push(entry);
+        localStorage.setItem(JSON.stringify(library));
     }
 
     function setupClickEvents() {
@@ -115,6 +135,8 @@
             var $this = $(this);
             $this.toggleClass('active');
         });
+        $('#reset-style')
+            .on('click', resetStyle);
     }
 
     function setupFileEvents() {
@@ -127,7 +149,13 @@
         window.ondrop = preventDefault;
         // window.oncontextmenu = preventDefault;
         window.onhashchange = hashListener;
-        window.onload = initPicker;
+        window.onload = load;
+    }
+
+    function load() {
+        initPicker();
+        $('body')
+            .css('opacity', 1);
     }
 
     function contextMenu() {
@@ -145,6 +173,7 @@
         $('[href="' + window.location.hash + '"]')
             .find('span')
             .click();
+        $wrapper[0].className = '';
         switch (window.location.hash) {
         case '#nowplaying':
             $wrapper.addClass('on-now-playing');
@@ -165,15 +194,15 @@
                 dialogPolyfill.registerDialog(dialog);
             }
         });
-        $showDialogButton.on('click', function () {
-            $dialog.each(function () {
-                this.showModal();
-            });
+        $showFilePickerBtn.on('click', function () {
+            $openFileDialog[0].showModal();
+        });
+        $showCustomizerBtn.on('click', function () {
+            $customizerModal[0].showModal();
         });
         $close.on('click', function () {
-            $dialog.each(function () {
-                this.close();
-            });
+            $(this)
+                .parents('dialog')[0].close();
         });
         $local.on('click', function () {
             $fileselect.click();
@@ -216,6 +245,7 @@
         var url = URL.createObjectURL(file);
         var fileNameArr = file.name.split('.');
         var extension = fileNameArr[fileNameArr.length - 1];
+        var fileReader = new FileReader();
         switch (extension) {
         case 'srt':
             $subtitle.attr('src', url);
@@ -232,19 +262,17 @@
 
     function readTags(file, index) {
         var args = arguments;
-        id3(file, function (error, tags) {
+        ID3.loadTags('', function () {
             var $track = $($playlistview.find('tr')[index + 1]);
-            if (error) {
-                console.log(error);
-            } else {
-                console.log(tags);
-                $track.find('.track-artist')
-                    .html(tags.artist);
-                $track.find('.track-album')
-                    .html(tags.album);
-                $track.find('.track-title')
-                    .html(tags.title);
-            }
+            var tags = ID3.getAllTags('');
+            $track.find('.track-artist')
+                .html(tags.artist);
+            $track.find('.track-album')
+                .html(tags.album);
+            $track.find('.track-title')
+                .html(tags.title);
+        }, {
+            dataReader: ID3.FileAPIReader(file)
         });
     }
 
@@ -347,6 +375,35 @@
         $slider.on("change input", seek);
     }
 
+    function setupSelectEvents() {
+        $('#font')
+            .on('change', function () {
+                var font = $(this)
+                    .val();
+                setFont(font);
+            });
+        $('#theme')
+            .on('change', function () {
+                var theme = $(this)
+                    .val();
+                setTheme(theme);
+            });
+    }
+
+    function setFont(font) {
+        $('#font-link')
+            .attr('href', '//fonts.googleapis.com/css?family=' + font.replace(/ /g, '+'));
+        $('#current-font')
+            .text('.mdl-button,h1,h2,h3,h4,h5,h6,.mdl-layout-title,body{font-family: ' + font + ' }');
+        localStorage.setItem('font', font);
+    }
+
+    function setTheme(theme) {
+        $('#theme-link')
+            .attr('href', 'assets/css/material.' + theme + '.min.css');
+        localStorage.setItem('theme', theme);
+    }
+
     function loadingAnimation() {
         function step(timestamp) {
             if (loading) {
@@ -357,6 +414,15 @@
             window.requestAnimationFrame(step);
         }
         window.requestAnimationFrame(step);
+    }
+
+    function resetStyle() {
+        $('#theme')
+            .val('blue-pink')
+            .trigger('change');
+        $('#font')
+            .val('Roboto')
+            .trigger('change');
     }
 
     function preventDefault(e) {

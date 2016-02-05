@@ -1,27 +1,21 @@
 {
   "name": "Material Player",
-  "description": "Multimedia layer for browser. Material designed.",
-  "version": "1.0.0",
+  "version": "1",
+  "description": "Material designed multimedia player",
   "manifest_version": 2,
-  "icons": {
-    "36": "icon.png"
-  },
-  "permissions": ["file://*/*", "fileSystem"],
-  "file_handlers": {
-    "any": {
-      "extensions": ["mp3"]
-    }
-  },
   "app": {
     "background": {
       "scripts": ["background.js"]
     }
   },
-  "sandbox": {
-    "pages": [
-    "sandbox.html"
-    ]
+  "icons": {
+    "36": "icon.png"
   },
-  "web_accessible_resources": ["index.html"]
+  "background": {
+    "persistent": false,
+    "scripts": ["background.js"]
+  },
+  "content_security_policy": "script-src 'self' https://apis.google.com https://www.google.com; object-src 'self'",
+  "permissions": ["http://*.google.com/", "https://*.google.com/", "file://*/*", "tabs"]
 }
 
