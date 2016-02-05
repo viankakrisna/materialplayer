@@ -71,7 +71,7 @@
             var accessToken = gapi.auth.getToken()
                 .access_token;
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', fileObj.downloadUrl);
+            xhr.open('GET', fileObj.downloadUrl, false);
             xhr.responseType = "blob";
             xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
             xhr.onload = function () {
@@ -81,6 +81,9 @@
                 $track.data('src', url);
                 $track.attr('data-src', url);
                 readTags(file, index);
+            };
+            xhr.onerror = function(){
+                downloadFile(fileObj, index);
             };
             xhr.send();
         }
@@ -139,6 +142,9 @@
     }
 
     function hashListener() {
+        $('[href="' + window.location.hash + '"]')
+            .find('span')
+            .click();
         switch (window.location.hash) {
         case '#nowplaying':
             $wrapper.addClass('on-now-playing');
