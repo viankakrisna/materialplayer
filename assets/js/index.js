@@ -22,7 +22,7 @@
     var $tracks = $('.track');
     var $time = $('#time');
     var $dialog = $('dialog');
-    var $showFilePickerBtn = $('#show-file-picker-btn');
+    var $showFilePickerBtn = $('.show-file-picker-btn');
     var $local = $('#local');
     var $close = $('.close');
     var $openFileDialog = $('#open-file-dialog');
@@ -87,8 +87,10 @@
                 var file = new File([xhr.response], 'blob');
                 var url = URL.createObjectURL(file);
                 var $track = $($playlistview.find('tr')[index + 1]);
+                var oldSrc = $track.data('src');
                 $track.data('src', url);
                 $track.attr('data-src', url);
+                $track.attr('data-link', oldSrc);
                 readTags(file, index);
             };
             xhr.onerror = function () {
@@ -115,14 +117,14 @@
         }
     }
 
-    function saveToLibrary(id, row) {
-        var library = JSON.parse(localStorage.getItem('library')) ? JSON.parse(localStorage.getItem('library')) : [];
-        var entry = {
-            id: file.id,
-            row: row
-        };
-        library.push(entry);
-        localStorage.setItem(JSON.stringify(library));
+    function saveToLibrary(tag, detail) {
+        var library = JSON.parse(localStorage.getItem('library')) ? JSON.parse(localStorage.getItem('library')) : {};
+        library[tag.artist] = library[tag.artist] || {};
+        library[tag.artist][tag.album] = library[tag.artist][tag.album] || {};
+        library[tag.artist][tag.album][tag.track] = library[tag.artist][tag.album][tag.track] || {};
+        library[tag.artist][tag.album][tag.track][tag.title] = tag;
+        library[tag.artist][tag.album][tag.title].detail = detail;
+        localStorage.setItem('library', JSON.stringify(library));
     }
 
     function setupClickEvents() {
@@ -154,7 +156,7 @@
 
     function load() {
         initPicker();
-        $('body')
+        $('#wrapper')
             .css('opacity', 1);
     }
 
@@ -211,7 +213,8 @@
 
     function renderPlaylist() {
         $playlistview.html(playlist.join(''));
-        $tracks.first()
+        $('.track')
+            .first()
             .click();
     }
 
@@ -261,7 +264,6 @@
     }
 
     function readTags(file, index) {
-        var args = arguments;
         ID3.loadTags('', function () {
             var $track = $($playlistview.find('tr')[index + 1]);
             var tags = ID3.getAllTags('');
@@ -271,6 +273,7 @@
                 .html(tags.album);
             $track.find('.track-title')
                 .html(tags.title);
+                console.log(tags);
         }, {
             dataReader: ID3.FileAPIReader(file)
         });

@@ -69,8 +69,9 @@
             <div class="mdl-layout__drawer">
                 <span class="mdl-layout-title">Material Player</span>
                 <nav class="mdl-navigation">
-                    <a class="mdl-navigation__link" href="http://github.com/viankakrisna/Material-Player" target="__blank">About</a>
+                    <a class="mdl-navigation__link show-file-picker-btn" href="#">Open</a>
                     <a class="mdl-navigation__link" href="#" id="show-customizer">Customize</a>
+                    <a class="mdl-navigation__link" href="http://github.com/viankakrisna/Material-Player" target="__blank">About</a>
                 </nav>
             </div>
             <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000">
@@ -91,7 +92,7 @@
                 <a id="loop" class="material-icons">loop</a>
                 <!-- <a id="shuffle" class="material-icons">shuffle</a> -->
                 <!-- <a id="mute" class="material-icons">mute</a> -->
-                <button id="show-file-picker-btn" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored show-file-picker-btn">
                     <i class="material-icons">add</i>
                 </button>
             </footer>
@@ -104,6 +105,7 @@
                 <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
                     <button id="local" type="button" class="mdl-button close">Local</button>
                     <button id="pick" type="button" class="mdl-button close">Google Drive</button>
+                    <button type="button" class="mdl-button close">Cancel</button>
                 </div>
             </dialog>
             <dialog id="customizer" class="mdl-dialog">
@@ -403,12 +405,7 @@
                         <option>yellow-teal</option>
                     </select>
                     <h6 for="font">Font</h6>
-                    <select name="font" id="font">
-                        <option>Roboto</option>
-                        <option>Roboto Slab</option>
-                        <option>Roboto Mono</option>
-                        <option>Open Sans</option>
-                    </select>
+                    <input type="text" name="font" id="font">
                 </div>
                 <div class="mdl-dialog__actions mdl-dialog__actions">
                     <button id="reset-style" type="button" class="mdl-button close">Reset</button>
@@ -425,6 +422,7 @@
         </div>
         <script src="https://www.google.com/jsapi?key=AIzaSyCtkghKt38OyadfYdhm3Ybubq2JVFl-QAo"></script>
         <script src="https://apis.google.com/js/client.js"></script>
+        <script src="http://vjs.zencdn.net/5.6.0/video.js"></script>
         <script src="assets/js/jquery.min.js"></script>
         <script src="assets/js/filepicker.js"></script>
         <script src="assets/js/material.min.js"></script>
