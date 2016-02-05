@@ -71,7 +71,7 @@
             var accessToken = gapi.auth.getToken()
                 .access_token;
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', fileObj.downloadUrl, false);
+            xhr.open('GET', fileObj.downloadUrl);
             xhr.responseType = "blob";
             xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
             xhr.onload = function () {
