@@ -28,7 +28,7 @@
     var $openFileDialog = $('#open-file-dialog');
     var $showCustomizerBtn = $('#show-customizer');
     var $customizerModal = $('#customizer');
-    var $ajax = new XMLHttpRequest();
+    var $resetstyle = $('#reset-style');
     var $libraryview = $('#libraryview');
     var name = 'name';
     var ids = [];
@@ -43,11 +43,11 @@
         setupSelectEvents();
         setupPlayer();
         setupDialog();
-        resetHash();
-        addEvent();
-        loadingAnimation();
+        setupTrackEvents();
         setTheme(theme);
         setFont(font);
+        loadingAnimation();
+        resetHash();
         // contextMenu();
     }
 
@@ -75,28 +75,48 @@
         });
     }
 
-    function downloadFile(fileObj, index) {
+    function downloadFile(fileObj, index, fromLink) {
         if (fileObj.downloadUrl) {
             var accessToken = gapi.auth.getToken()
                 .access_token;
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', fileObj.downloadUrl);
-            xhr.responseType = "blob";
-            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-            xhr.onload = function () {
-                var file = new File([xhr.response], 'blob');
-                var url = URL.createObjectURL(file);
-                var $track = $($playlistview.find('tr')[index + 1]);
-                var oldSrc = $track.data('src');
-                $track.data('src', url);
-                $track.attr('data-src', url);
-                $track.attr('data-link', oldSrc);
-                readTags(file, index);
-            };
-            xhr.onerror = function () {
-                // downloadFile(fileObj, index);
-            };
-            xhr.send();
+            if (fromLink) {
+                xhr.open('GET', $track.data('src'));
+                xhr.responseType = "blob";
+                xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+                xhr.onload = function () {
+                    var file = new File([xhr.response], 'blob');
+                    var url = URL.createObjectURL(file);
+                    var $track = $($playlistview.find('tr')[index + 1]);
+                    var oldSrc = $track.data('src');
+                    $track.data('src', url);
+                    $track.attr('data-src', url);
+                    $track.attr('data-link', oldSrc);
+                    readTags(file, index);
+                };
+                xhr.onerror = function () {
+                    downloadFile(fileObj, index, true);
+                };
+                xhr.send();
+            } else {
+                xhr.open('GET', fileObj.downloadUrl);
+                xhr.responseType = "blob";
+                xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+                xhr.onload = function () {
+                    var file = new File([xhr.response], 'blob');
+                    var url = URL.createObjectURL(file);
+                    var $track = $($playlistview.find('tr')[index + 1]);
+                    var oldSrc = $track.data('src');
+                    $track.data('src', url);
+                    $track.attr('data-src', url);
+                    $track.attr('data-link', oldSrc);
+                    readTags(file, index);
+                };
+                xhr.onerror = function () {
+                    downloadFile(fileObj, index, true);
+                };
+                xhr.send();
+            }
         }
     }
 
@@ -120,30 +140,31 @@
     function saveToLibrary(tag, detail) {
         var library = JSON.parse(localStorage.getItem('library')) ? JSON.parse(localStorage.getItem('library')) : {};
         library[tag.artist] = library[tag.artist] || {};
-        library[tag.artist][tag.album] = library[tag.artist][tag.album] || {};
-        library[tag.artist][tag.album][tag.track] = library[tag.artist][tag.album][tag.track] || {};
-        library[tag.artist][tag.album][tag.track][tag.title] = tag;
-        library[tag.artist][tag.album][tag.title].detail = detail;
+        library[tag.artist][tag.album] = library[tag.artist][tag.album] || [];
+        tag.detail = detail;
+        library[tag.artist][tag.album].push(tag);
         localStorage.setItem('library', JSON.stringify(library));
     }
 
     function setupClickEvents() {
-        $as.on('click', function () {
-            if (this.getAttribute('href')) {
-                window.location.hash = this.getAttribute('href');
+        $as.on('click', function (e) {
+            if (e.target.getAttribute('href')) {
+                window.location.hash = e.target.getAttribute('href');
             }
         });
-        $loop.on('click', function () {
-            var $this = $(this);
-            $this.toggleClass('active');
-        });
-        $('#reset-style')
-            .on('click', resetStyle);
+        $loop.on('click', toggleActive);
+        $resetstyle.on('click', resetStyle);
+        $footer.on('keyup', keyupListener);
     }
 
     function setupFileEvents() {
         $fileselect.on("change", loopFiles);
         $wrapper.on("drop", loopFiles);
+    }
+
+    function toggleActive(e) {
+        var $target = $(e.target);
+        $target.toggleClass('active');
     }
 
     function setupWindowEvents() {
@@ -152,6 +173,16 @@
         // window.oncontextmenu = preventDefault;
         window.onhashchange = hashListener;
         window.onload = load;
+    }
+
+    function keyupListener(e) {
+        if (e.keyCode == 32) {
+            if ($footer.hasClass('played')) {
+                $pause.click();
+            } else {
+                $play.click();
+            }
+        }
     }
 
     function load() {
@@ -202,8 +233,8 @@
         $showCustomizerBtn.on('click', function () {
             $customizerModal[0].showModal();
         });
-        $close.on('click', function () {
-            $(this)
+        $close.on('click', function (e) {
+            $(e.target)
                 .parents('dialog')[0].close();
         });
         $local.on('click', function () {
@@ -273,13 +304,12 @@
                 .html(tags.album);
             $track.find('.track-title')
                 .html(tags.title);
-                console.log(tags);
         }, {
             dataReader: ID3.FileAPIReader(file)
         });
     }
 
-    function addEvent() {
+    function setupTrackEvents() {
         $wrapper.on('click', '.track', function (e) {
             var $this = $(this);
             var url = $this.data('src');
@@ -380,14 +410,14 @@
 
     function setupSelectEvents() {
         $('#font')
-            .on('change', function () {
-                var font = $(this)
+            .on('change', function (e) {
+                var font = $(e.target)
                     .val();
                 setFont(font);
             });
         $('#theme')
-            .on('change', function () {
-                var theme = $(this)
+            .on('change', function (e) {
+                var theme = $(e.target)
                     .val();
                 setTheme(theme);
             });
