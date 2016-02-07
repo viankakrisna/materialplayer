@@ -65,7 +65,7 @@
                     fileList = fileList.sort(ascending);
                     fileList.forEach(parseGoogleDrive);
                     renderPlaylist();
-                    ids.forEach(getFileUrl);
+                    fileList.forEach(downloadFile);
                 }
             });
         }
@@ -83,7 +83,6 @@
     function downloadFileCallBack() {
         var file = new File([xhr.response], 'blob');
         var url = URL.createObjectURL(file);
-        var $track = $($playlistview.find('tr')[index + 1]);
         var oldSrc = $track.data('src');
         var fileReader = new FileReader();
         fileReader.onload = function (evt) {
@@ -102,40 +101,21 @@
         readTags(file, index);
     }
 
-    function downloadFile(fileObj, index, fromLink) {
+    function downloadFile(fileObj, index) {
         if (fileObj.downloadUrl) {
             chrome.identity.getAuthToken({
                 'interactive': false
             }, function (accessToken) {
+                var $track = $($playlistview.find('tr')[index + 1]);
                 var xhr = new XMLHttpRequest();
-                if (fromLink) {
-                    xhr.open('GET', $track.data('src'));
-                    xhr.responseType = "blob";
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-                    xhr.onload = downloadFileCallBack;
-                    xhr.onerror = function () {
-                        downloadFile(fileObj, index, true);
-                    };
-                    xhr.send();
-                } else {
-                    xhr.open('GET', fileObj.downloadUrl);
-                    xhr.responseType = "blob";
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-                    xhr.onload = function () {
-                        var file = new File([xhr.response], 'blob');
-                        var url = URL.createObjectURL(file);
-                        var $track = $($playlistview.find('tr')[index + 1]);
-                        var oldSrc = $track.data('src');
-                        $track.data('src', url);
-                        $track.attr('data-src', url);
-                        $track.attr('data-link', oldSrc);
-                        readTags(file, index);
-                    };
-                    xhr.onerror = function () {
-                        downloadFile(fileObj, index, true);
-                    };
-                    xhr.send();
-                }
+                xhr.open('GET', $track.data('src'));
+                xhr.responseType = "blob";
+                xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+                xhr.onload = downloadFileCallBack;
+                xhr.onerror = function () {
+                    downloadFile(fileObj, index, true);
+                };
+                xhr.send();
             });
         }
     }

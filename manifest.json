@@ -16,7 +16,7 @@
     "36": "icon.png"
   },
   "permissions": ["https://*.google.com/", "https://*.googleapis.com/", "file://*/*", "storage", "unlimitedStorage", "identity"],
-  "content_security_policy": "script-src 'self' https://apis.google.com https://www.google.com; object-src 'self'",
+  "content_security_policy": "script-src 'self' https://apis.google.com https://www.google.com https://docs.google.com; object-src 'self'",
   "oauth2": {
     "client_id": "1868175267-d8imsu875ffa3csl8nebgkin5gi035d2.apps.googleusercontent.com",
     "scopes": ["https://www.googleapis.com/auth/plus.login", "https://www.googleapis.com/auth/drive.file"]
