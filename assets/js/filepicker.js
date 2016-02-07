@@ -15,9 +15,9 @@
         // Disable the button until the API loads, as it won't work properly until then.
         this.buttonEl.disabled = true;
         // Load the drive API
-        gapi.client.load('drive', 'v2', this._driveApiLoaded.bind(this));
+        gapi.client.load('drive', 'v2', this.driveApiLoaded.bind(this));
         google.load('picker', '1', {
-            callback: this._pickerApiLoaded.bind(this)
+            callback: this.pickerApiLoaded.bind(this)
         });
     };
     FilePicker.prototype = {
@@ -31,12 +31,12 @@
             }, function (token) {
                 // Use the token.
                 if (token) {
-                    this._showPicker();
+                    this.showPicker();
                 } else {
                     // The user has not yet authenticated with Google
                     // We need to do the authentication before displaying the Drive picker.
-                    this._doAuth(false, function () {
-                        this._showPicker();
+                    this.doAuth(false, function () {
+                        this.showPicker();
                     }.bind(this));
                 }
             }.bind(this));
@@ -45,7 +45,7 @@
          * Show the file picker once authentication has been done.
          * @private
          */
-        _showPicker: function () {
+        showPicker: function () {
             chrome.identity.getAuthToken({
                 interactive: false
             }, function (accessToken) {
@@ -53,8 +53,8 @@
                     .addView(google.picker.ViewId.FOLDERS)
                     .setAppId(this.clientId)
                     .setOAuthToken(accessToken)
-                    .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
-                    .setCallback(this._pickerCallback.bind(this))
+                    .enableFeature(google.picker.Feature.MULTISELECTENABLED)
+                    .setCallback(this.pickerCallback.bind(this))
                     .build()
                     .setVisible(true);
             }.bind(this));
@@ -63,17 +63,17 @@
          * Called when a file has been selected in the Google Drive file picker.
          * @private
          */
-        _pickerCallback: function (data) {
+        pickerCallback: function (data) {
             if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
                 var files = data.docs;
-                this._fileGetCallback(files);
+                this.fileGetCallback(files);
             }
         },
         /**
          * Called when file details have been retrieved from Google Drive.
          * @private
          */
-        _fileGetCallback: function (file) {
+        fileGetCallback: function (file) {
             if (this.onSelect) {
                 this.onSelect(file);
             }
@@ -82,25 +82,26 @@
          * Called when the Google Drive file picker API has finished loading.
          * @private
          */
-        _pickerApiLoaded: function () {
+        pickerApiLoaded: function () {
             this.buttonEl.disabled = false;
         },
         /**
          * Called when the Google Drive API has finished loading.
          * @private
          */
-        _driveApiLoaded: function () {
-            this._doAuth(true);
+        driveApiLoaded: function () {
+            this.doAuth(true);
         },
         /**
          * Authenticate with Google Drive via the Google JavaScript API.
          * @private
          */
-        _doAuth: function (immediate, callback) {
+        doAuth: function (interactive, callback) {
             chrome.identity.getAuthToken({
-                interactive: false
+                interactive: interactive
             }, callback);
-        }
+        },
+        verifytoken: function (accessToken) {}
     };
 }());
 

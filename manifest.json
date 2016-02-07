@@ -3,23 +3,26 @@
   "version": "1",
   "description": "Material designed multimedia player",
   "manifest_version": 2,
-  "background": {
-    "scripts": ["background.js"]
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
   },
-  "sandbox": {
-    "pages": ["drive.html"]
+  "externally_connectable": {
+    "matches": ["*://*.google.com/*"]
   },
-  "browser_action": {
-    "default_icon": "icon.png"
+  "file_handlers": {
+    "qo_documents": {
+      "extensions": ["mp3", "m4a", "aac", "wav", "flac"]
+    }
   },
   "icons": {
     "36": "icon.png"
   },
-  "permissions": ["https://*.google.com/", "https://*.googleapis.com/", "file://*/*", "storage", "unlimitedStorage", "identity"],
-  "content_security_policy": "script-src 'self' https://apis.google.com https://www.google.com; object-src 'self'",
+  "permissions": ["clipboardRead", "clipboardWrite", "*://*.google.com/*", "fileSystem", "fileSystem.write", "https://www.google-analytics.com/", "https://www.googleapis.com/", "identity", "storage", "unlimitedStorage"],
   "oauth2": {
     "client_id": "1868175267-d8imsu875ffa3csl8nebgkin5gi035d2.apps.googleusercontent.com",
-    "scopes": ["https://www.googleapis.com/auth/plus.login", "https://www.googleapis.com/auth/drive.file"]
+    "scopes": ["https://www.googleapis.com/auth/plus.login", "https://www.googleapis.com/auth/drive.file", "email", "profile"]
   }
 }
 

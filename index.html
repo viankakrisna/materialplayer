@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app>
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -9,7 +9,7 @@
         <link rel="icon" type="image/png" href="icon.png">
         <link rel="stylesheet" href="assets/css/icon.css">
         <link id="theme-link" rel="stylesheet" href="assets/css/material.blue-pink.min.css" />
-        <link id="font-link" rel='stylesheet' href='//fonts.googleapis.com/css?family=Roboto' type='text/css'>
+        <link id="font-link" rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto' type='text/css' disabled>
         <link rel="stylesheet" href="assets/css/style.css">
         <style id="current-font"></style>
     </head>
@@ -71,7 +71,7 @@
                 <nav class="mdl-navigation">
                     <a class="mdl-navigation__link show-file-picker-btn" href="#">Open</a>
                     <a class="mdl-navigation__link" href="#" id="show-customizer">Customize</a>
-                    <a class="mdl-navigation__link" href="http://github.com/viankakrisna/Material-Player" target="__blank">About</a>
+                    <a class="mdl-navigation__link" href="http://github.com/viankakrisna/materialplayer" target="__blank">About</a>
                 </nav>
             </div>
             <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000">
@@ -84,7 +84,7 @@
                     <em id="currenttrack">No media.</em>
                     <span id="time">(00:00 / 00:00)</span>
                 </div>
-                <input id="slider" class="mdl-slider mdl-js-slider" type="range" min="0" max="1000000" value="0" tabindex="0">
+                <input id="slider" class="mdl-slider mdl-js-slider" type="range" min="0" max="100000" value="0" tabindex="0">
                 <a id="previous" class="material-icons">skip_previous</a>
                 <a id="play" class="material-icons">play_arrow</a>
                 <a id="pause" class="material-icons">pause</a>
@@ -420,13 +420,19 @@
                 </ul>
             </div>
         </div>
-        <script src="https://www.google.com/jsapi?key=AIzaSyCtkghKt38OyadfYdhm3Ybubq2JVFl-QAo"></script>
-        <script src="https://apis.google.com/js/client.js"></script>
+        <script src="assets/js/material.min.js"></script>
         <script src="assets/js/jquery.min.js"></script>
         <script src="assets/js/filepicker.js"></script>
-        <script src="assets/js/material.min.js"></script>
         <script src="assets/js/id3-minimized.js"></script>
-        <script src="assets/js/index.js"></script>
+        <script src="assets/js/mp.init.js"></script>
+        <script src="assets/js/mp.player.js"></script>
+        <script src="assets/js/mp.playlist.js"></script>
+        <script src="assets/js/mp.customizer.js"></script>
+        <script src="assets/js/mp.dialog.js"></script>
+        <script src="assets/js/mp.drive.js"></script>
+        <script src="assets/js/mp.contextmenu.js"></script>
+        <script src="assets/js/jsapi.js"></script>
+        <script src="assets/js/gapi-chrome-apps.js"></script>
     </body>
 
 </html>
