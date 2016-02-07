@@ -1,6 +1,7 @@
 (function ($) {
     'use strict';
     //States
+    var storage = chrome.storage.local;
     var playlist = [];
     var $window = $(window);
     var $document = $(document);
@@ -33,10 +34,17 @@
     var name = 'name';
     var ids = [];
     var loading = false;
-    var theme = localStorage.getItem('theme') || 'indigo-pink';
-    var font = localStorage.getItem('font') || 'Roboto';
-
+    // storage.set({
+    //     'theme': 'indigo-pink'
+    // });
+    // storage.set({
+    //     'font': 'Roboto'
+    // });
     function init() {
+        getBlob('drive.html', function (blob) {
+            $('#webview')
+                .attr('src', blob);
+        });
         setupClickEvents();
         setupWindowEvents();
         setupFileEvents();
@@ -44,26 +52,23 @@
         setupPlayer();
         setupDialog();
         setupTrackEvents();
-        setTheme(theme);
-        setFont(font);
         loadingAnimation();
         resetHash();
         // contextMenu();
     }
 
     function initPicker() {
-        var picker = new FilePicker({
-            apiKey: 'AIzaSyBMDM4v6cjmt3k00QO7PAZn2MGg8hRvSv4',
-            clientId: '1868175267',
-            buttonEl: $('#pick')[0],
-            onSelect: function (fileList) {
-                // console.log(fileList);
-                fileList = fileList.sort(ascending);
-                fileList.forEach(parseGoogleDrive);
-                renderPlaylist();
-                ids.forEach(getFileUrl);
-            }
-        });
+        if (window.FilePicker && window.gapi) {
+            var picker = new FilePicker({
+                buttonEl: $('#pick')[0],
+                onSelect: function (fileList) {
+                    fileList = fileList.sort(ascending);
+                    fileList.forEach(parseGoogleDrive);
+                    renderPlaylist();
+                    ids.forEach(getFileUrl);
+                }
+            });
+        }
     }
 
     function getFileUrl(fileId, index) {
@@ -75,48 +80,63 @@
         });
     }
 
+    function downloadFileCallBack() {
+        var file = new File([xhr.response], 'blob');
+        var url = URL.createObjectURL(file);
+        var $track = $($playlistview.find('tr')[index + 1]);
+        var oldSrc = $track.data('src');
+        var fileReader = new FileReader();
+        fileReader.onload = function (evt) {
+            var result = evt.target.result;
+            try {
+                save[$track.data('id')] = result;
+                storage.set(save);
+            } catch (e) {
+                console.log("Storage failed: " + e);
+            }
+        };
+        fileReader.readAsDataURL(file);
+        $track.data('src', url);
+        $track.attr('data-src', url);
+        $track.attr('data-link', oldSrc);
+        readTags(file, index);
+    }
+
     function downloadFile(fileObj, index, fromLink) {
         if (fileObj.downloadUrl) {
-            var accessToken = gapi.auth.getToken()
-                .access_token;
-            var xhr = new XMLHttpRequest();
-            if (fromLink) {
-                xhr.open('GET', $track.data('src'));
-                xhr.responseType = "blob";
-                xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-                xhr.onload = function () {
-                    var file = new File([xhr.response], 'blob');
-                    var url = URL.createObjectURL(file);
-                    var $track = $($playlistview.find('tr')[index + 1]);
-                    var oldSrc = $track.data('src');
-                    $track.data('src', url);
-                    $track.attr('data-src', url);
-                    $track.attr('data-link', oldSrc);
-                    readTags(file, index);
-                };
-                xhr.onerror = function () {
-                    downloadFile(fileObj, index, true);
-                };
-                xhr.send();
-            } else {
-                xhr.open('GET', fileObj.downloadUrl);
-                xhr.responseType = "blob";
-                xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-                xhr.onload = function () {
-                    var file = new File([xhr.response], 'blob');
-                    var url = URL.createObjectURL(file);
-                    var $track = $($playlistview.find('tr')[index + 1]);
-                    var oldSrc = $track.data('src');
-                    $track.data('src', url);
-                    $track.attr('data-src', url);
-                    $track.attr('data-link', oldSrc);
-                    readTags(file, index);
-                };
-                xhr.onerror = function () {
-                    downloadFile(fileObj, index, true);
-                };
-                xhr.send();
-            }
+            chrome.identity.getAuthToken({
+                'interactive': false
+            }, function (accessToken) {
+                var xhr = new XMLHttpRequest();
+                if (fromLink) {
+                    xhr.open('GET', $track.data('src'));
+                    xhr.responseType = "blob";
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+                    xhr.onload = downloadFileCallBack;
+                    xhr.onerror = function () {
+                        downloadFile(fileObj, index, true);
+                    };
+                    xhr.send();
+                } else {
+                    xhr.open('GET', fileObj.downloadUrl);
+                    xhr.responseType = "blob";
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+                    xhr.onload = function () {
+                        var file = new File([xhr.response], 'blob');
+                        var url = URL.createObjectURL(file);
+                        var $track = $($playlistview.find('tr')[index + 1]);
+                        var oldSrc = $track.data('src');
+                        $track.data('src', url);
+                        $track.attr('data-src', url);
+                        $track.attr('data-link', oldSrc);
+                        readTags(file, index);
+                    };
+                    xhr.onerror = function () {
+                        downloadFile(fileObj, index, true);
+                    };
+                    xhr.send();
+                }
+            });
         }
     }
 
@@ -138,12 +158,14 @@
     }
 
     function saveToLibrary(tag, detail) {
-        var library = JSON.parse(localStorage.getItem('library')) ? JSON.parse(localStorage.getItem('library')) : {};
+        var library = JSON.parse(storage.get('library')) ? JSON.parse(storage.get('library')) : {};
         library[tag.artist] = library[tag.artist] || {};
         library[tag.artist][tag.album] = library[tag.artist][tag.album] || [];
         tag.detail = detail;
         library[tag.artist][tag.album].push(tag);
-        localStorage.setItem('library', JSON.stringify(library));
+        storage.set({
+            'library': library
+        });
     }
 
     function setupClickEvents() {
@@ -187,6 +209,8 @@
 
     function load() {
         initPicker();
+        storage.get('theme', setTheme);
+        storage.get('font', setFont);
         $('#wrapper')
             .css('opacity', 1);
     }
@@ -279,7 +303,6 @@
         var url = URL.createObjectURL(file);
         var fileNameArr = file.name.split('.');
         var extension = fileNameArr[fileNameArr.length - 1];
-        var fileReader = new FileReader();
         switch (extension) {
         case 'srt':
             $subtitle.attr('src', url);
@@ -326,7 +349,7 @@
     }
 
     function saveToLocalStorage(key, playlist) {
-        window.localStorage[key] = playlist;
+        storage[key] = playlist;
     }
 
     function seek(event) {
@@ -413,28 +436,36 @@
             .on('change', function (e) {
                 var font = $(e.target)
                     .val();
-                setFont(font);
+                setFont({
+                    font: font
+                });
             });
         $('#theme')
             .on('change', function (e) {
                 var theme = $(e.target)
                     .val();
-                setTheme(theme);
+                setTheme({
+                    theme: theme
+                });
             });
     }
 
-    function setFont(font) {
-        $('#font-link')
-            .attr('href', '//fonts.googleapis.com/css?family=' + font.replace(/ /g, '+'));
-        $('#current-font')
-            .text('.mdl-button,h1,h2,h3,h4,h5,h6,.mdl-layout-title,body{font-family: ' + font + ' }');
-        localStorage.setItem('font', font);
+    function setFont(setting) {
+        var font = !$.isEmptyObject(setting) ? setting.font : 'Roboto';
+        if (font) {
+            $('#font-link')
+                .attr('href', 'https://fonts.googleapis.com/css?family=' + font.replace(/ /g, '+'));
+            $('#current-font')
+                .text('.mdl-button,h1,h2,h3,h4,h5,h6,.mdl-layout-title,body{font-family: ' + font + ' }');
+        }
+        storage.set(setting);
     }
 
-    function setTheme(theme) {
+    function setTheme(setting) {
+        var theme = !$.isEmptyObject(setting) ? setting.theme : 'indigo-pink';
         $('#theme-link')
             .attr('href', 'assets/css/material.' + theme + '.min.css');
-        localStorage.setItem('theme', theme);
+        storage.set(setting);
     }
 
     function loadingAnimation() {
@@ -458,11 +489,28 @@
             .trigger('change');
     }
 
+    function getBlob(src, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', src, true);
+        xhr.responseType = 'blob';
+        xhr.onload = function (e) {
+            var blob = window.URL.createObjectURL(this.response);
+            callback(blob);
+        };
+        xhr.send();
+    }
+
     function preventDefault(e) {
         e.preventDefault();
     }
     if (window.File && window.FileList && window.FileReader) {
         init();
+        chrome.storage.onChanged.addListener(function (changes, namespace) {
+            for (var key in changes) {
+                var storageChange = changes[key];
+                console.log('Storage key "%s" in namespace "%s" changed. ' + 'Old value was "%s", new value is "%s".', key, namespace, storageChange.oldValue, storageChange.newValue);
+            }
+        });
     }
 })(jQuery);
 

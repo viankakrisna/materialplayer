@@ -3,19 +3,23 @@
   "version": "1",
   "description": "Material designed multimedia player",
   "manifest_version": 2,
-  "app": {
-    "background": {
-      "scripts": ["background.js"]
-    }
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "sandbox": {
+    "pages": ["drive.html"]
+  },
+  "browser_action": {
+    "default_icon": "icon.png"
   },
   "icons": {
     "36": "icon.png"
   },
-  "background": {
-    "persistent": false,
-    "scripts": ["background.js"]
-  },
+  "permissions": ["https://*.google.com/", "https://*.googleapis.com/", "file://*/*", "storage", "unlimitedStorage", "identity"],
   "content_security_policy": "script-src 'self' https://apis.google.com https://www.google.com; object-src 'self'",
-  "permissions": ["http://*.google.com/", "https://*.google.com/", "file://*/*", "tabs"]
+  "oauth2": {
+    "client_id": "1868175267-d8imsu875ffa3csl8nebgkin5gi035d2.apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/plus.login", "https://www.googleapis.com/auth/drive.file"]
+  }
 }
 
