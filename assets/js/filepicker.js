@@ -96,7 +96,7 @@
 		 */
 		_doAuth: function (immediate, callback) {
 			gapi.auth.authorize({
-				client_id: this.clientId + '-idei74b09vh1kuvns0n1qul64626hfig.apps.googleusercontent.com',
+				client_id: this.clientId + '-4sbpcq4qcjto2tl1ao2m6qpanc56c5af.apps.googleusercontent.com',
 				scope: 'https://www.googleapis.com/auth/drive',
 				immediate: immediate
 			}, callback);
