@@ -6,76 +6,16 @@ MP = (function ($) {
      */
     var $window = $(window);
     var $document = $(document);
-    var $wrapper = $('#wrapper');
     var $as = $('a');
     var app = window.app = {};
-    /*
-        Storage Reset
-     */
-    var storage = window.app.storage = (function () {
-        var obj = {
-            get: function (save) {
-                // return localStorage.getItem(save);
-            },
-            set: function () {},
-        };
-        if (chrome && chrome.storage) {
-            obj = chrome.storage.local;
-        }
-        return obj;
-    }());
-
-    function storageReset() {
-        storage.set({
-            'theme': 'indigo-pink'
-        });
-        storage.set({
-            'font': 'Roboto'
-        });
-    }
+    var $wrapper = $('#wrapper');
 
     function preventDefault(e) {
         e.preventDefault();
     }
-    /*
-        Hash Reset
-     */
-    function resetHash() {
-        if (window.location.hash) {
-            window.location.hash = '';
-        }
-    }
-
-    function setupClickEvents() {
-        $as.on('click', function (e) {
-            if (e.target.getAttribute('href')) {
-                window.location.hash = e.target.getAttribute('href');
-            }
-        });
-    }
-
-    function setupWindowEvents() {
-        // window.oncontextmenu = preventDefault;
-        window.onhashchange = hashListener;
-    }
 
     function init() {
         $wrapper.css('opacity', 1);
-    }
-
-    function hashListener() {
-        $('[href="' + window.location.hash + '"]')
-            .find('span')
-            .click();
-        $wrapper[0].className = '';
-        switch (window.location.hash) {
-        case '#nowplaying':
-            $wrapper.addClass('on-now-playing');
-            break;
-        default:
-            $wrapper.removeClass('on-now-playing');
-            break;
-        }
     }
 
     function getBlob(src, callback) {

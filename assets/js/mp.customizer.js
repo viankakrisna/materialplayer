@@ -9,7 +9,7 @@ MP.customizer = (function ($) {
     var $resetstyle = $('#reset-style');
     var $font = $('#font');
     var $theme = $('#theme');
-    var storage = window.app.storage;
+    var storage = window.MP.storage;
 
     function initCustomizer() {
         $showCustomizerBtn.attr('disabled', false);
@@ -44,6 +44,7 @@ MP.customizer = (function ($) {
                 .text('.mdl-button,h1,h2,h3,h4,h5,h6,.mdl-layout-title,body{font-family: ' + font + ' }');
         }
         storage.set(setting);
+        $font.val(font);
     }
 
     function setTheme(setting) {
@@ -51,6 +52,7 @@ MP.customizer = (function ($) {
         $('#theme-link')
             .attr('href', 'assets/css/material.' + theme + '.min.css');
         storage.set(setting);
+        $theme.val(theme);
     }
 
     function resetStyle() {
