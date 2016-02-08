@@ -67,8 +67,8 @@ MP.player = (function ($) {
         var currentTrack = '';
         $playerwrapper.removeClass('paused');
         $playerwrapper.addClass('played');
-        $('.track.active')
-            .find('td')
+        var $activeTrack = $('.track.active');
+        $activeTrack.find('td')
             .each(function (index, info) {
                 var $info = $(info);
                 if (index && $info.text()) {
@@ -76,6 +76,8 @@ MP.player = (function ($) {
                 }
             });
         $currenttrack.html(currentTrack);
+        $('[href="#nowplaying"]').find('span').click();
+        $window.trigger('mp:played', [$activeTrack]);
     }
 
     function onPause() {
@@ -130,6 +132,13 @@ MP.player = (function ($) {
         $loop.on('click', toggleActive);
         $playerwrapper.on('keyup', keyupListener);
         $slider.on("change input", seek);
+        $window.on('mp:playlistrendered', playFirstSong);
+    }
+
+    function playFirstSong() {
+        $('.track')
+            .first()
+            .click();
     }
     $window.on('load', setupPlayerEvents);
     return {

@@ -19,9 +19,7 @@ MP.playlist = (function ($) {
 
     function renderPlaylist($laylistview, playlist) {
         $playlistview.html(playlist.join(''));
-        $('.track')
-            .first()
-            .click();
+        $window.trigger('mp:playlistrendered');
     }
 
     function loopFiles(e) {
@@ -102,6 +100,7 @@ MP.playlist = (function ($) {
                 .html(tags.album);
             $track.find('.track-title')
                 .html(tags.title);
+            $window.trigger('mp:metadataready', [$track]);
         }, {
             dataReader: ID3.FileAPIReader(file)
         });

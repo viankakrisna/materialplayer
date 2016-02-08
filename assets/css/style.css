@@ -1,15 +1,3 @@
-#gapiframe {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 99999999;
-    width: 100%;
-    height: 100%;
-    display: none;
-}
-
 #wrapper {
     opacity: 0;
 }
@@ -80,13 +68,15 @@ footer {
 }
 
 #player {
-    margin: auto;
+    margin: 104px auto 124px;
     position: fixed;
     left: 0;
     right: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100vh - 228px);
     background: black;
+    top: 0;
+    bottom: 0;
 }
 
 .mdl-button--fab {
