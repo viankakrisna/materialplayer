@@ -12,6 +12,7 @@ MP.playlist = (function ($) {
     var tableheading = "<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th><th>File</th></tr>";
     var $fileselect = $('#fileselect');
     var $wrapper = $('#wrapper');
+    var $subtitle = $('#subtitle');
 
     function toArray(arraylike) {
         return Array.prototype.slice.call(arraylike);
@@ -24,6 +25,7 @@ MP.playlist = (function ($) {
 
     function loopFiles(e) {
         e = e.originalEvent;
+        e.preventDefault();
         var files = e.target.files || (e.dataTransfer && e.dataTransfer.files);
         var fileArray = toArray(files);
         fileArray = fileArray.sort(sortby('name', 'ascending'));
@@ -78,7 +80,7 @@ MP.playlist = (function ($) {
         var extension = fileNameArr[fileNameArr.length - 1];
         switch (extension) {
         case 'srt':
-            $subtitle.attr('src', url);
+            $subtitle.attr('data-srt', url);
             break;
         default:
             if (!index) {
@@ -91,19 +93,21 @@ MP.playlist = (function ($) {
     }
 
     function readTags(file, index) {
-        ID3.loadTags('', function () {
-            var $track = $($playlistview.find('tr')[index + 1]);
-            var tags = ID3.getAllTags('');
-            $track.find('.track-artist')
-                .html(tags.artist);
-            $track.find('.track-album')
-                .html(tags.album);
-            $track.find('.track-title')
-                .html(tags.title);
-            $window.trigger('mp:metadataready', [$track]);
-        }, {
-            dataReader: ID3.FileAPIReader(file)
-        });
+        if (file.name.indexOf('.mp4') === -1) {
+            ID3.loadTags('', function () {
+                var $track = $($playlistview.find('tr')[index + 1]);
+                var tags = ID3.getAllTags('');
+                $track.find('.track-artist')
+                    .html(tags.artist);
+                $track.find('.track-album')
+                    .html(tags.album);
+                $track.find('.track-title')
+                    .html(tags.title);
+                $window.trigger('mp:metadataready', [$track]);
+            }, {
+                dataReader: ID3.FileAPIReader(file)
+            });
+        }
     }
 
     function setupTrackEvents() {

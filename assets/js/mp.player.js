@@ -78,6 +78,7 @@ MP.player = (function ($) {
         $currenttrack.html(currentTrack);
         $('[href="#nowplaying"]').find('span').click();
         $window.trigger('mp:played', [$activeTrack]);
+        srt();
     }
 
     function onPause() {

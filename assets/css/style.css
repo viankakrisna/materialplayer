@@ -67,6 +67,27 @@ footer {
     color: white;
 }
 
+.on-now-playing #footer:hover + #subtitle,
+#subtitle {
+    position: fixed;
+    margin: auto;
+    margin-bottom: 140px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: white;
+    text-align: center;
+    font-size: 2em;
+    line-height: 1.5em;
+    text-shadow: 0 0 10px black;
+    z-index: 1;
+}
+
+.on-now-playing #subtitle {
+    margin-bottom: 1em;
+    max-width: 30em;
+}
+
 #player {
     margin: 104px auto 124px;
     position: fixed;
@@ -131,7 +152,6 @@ footer {
 .on-now-playing header,
 .on-now-playing footer {
     opacity: 0;
-    transition: 1s !important;
 }
 
 .on-now-playing header:hover,
