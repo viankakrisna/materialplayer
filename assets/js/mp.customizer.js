@@ -38,8 +38,8 @@ MP.customizer = (function ($) {
     function setFont(setting) {
         var font = setting.font !== 'null' ? setting.font : 'Roboto';
         if (setting.font) {
-            // $('#font-link')
-            //     .attr('href', 'https://fonts.googleapis.com/css?family=' + font.replace(/ /g, '+'));
+            $('#font-link')
+                .attr('href', 'https://fonts.googleapis.com/css?family=' + font.replace(/ /g, '+'));
             $('#current-font')
                 .text('.mdl-button,h1,h2,h3,h4,h5,h6,.mdl-layout-title,body{font-family: ' + font + ' }');
             storage.set(setting);

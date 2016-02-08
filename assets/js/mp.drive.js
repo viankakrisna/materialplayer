@@ -20,7 +20,6 @@
                 // console.log(fileList);
                 fileList = fileList.sort(sortby('name', 'ascending'));
                 fileList.forEach(parseGoogleDrive);
-                console.log(playlist);
                 renderPlaylist($playlistview, playlist);
                 ids.forEach(getFileUrl);
             }
@@ -32,7 +31,7 @@
             'fileId': fileId
         });
         request.execute(function (resp) {
-            downloadFile(resp, index);
+            downloadFile(resp, index, true);
         });
     }
 
@@ -82,13 +81,13 @@
     }
 
     function parseGoogleDrive(file, index) {
+        var row = ['<tr class="track" data-id="' + file.id + '" data-src="' + 'https://docs.google.com/uc?id=' + file.id + '&export=download' + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + file.name + '</td></tr>'].join('');
         if (!index) {
             ids = [];
             playlist = [];
             playlist.push("<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th><th>File</th></tr>");
         }
         ids.push(file.id);
-        var row = ['<tr class="track" data-id="' + file.id + '" data-src="' + 'https://docs.google.com/uc?id=' + file.id + '&export=download' + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + file.name + '</td></tr>'].join('');
         playlist.push(row);
     }
 }(jQuery));
