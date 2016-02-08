@@ -36,23 +36,25 @@ MP.customizer = (function ($) {
     }
 
     function setFont(setting) {
-        var font = !$.isEmptyObject(setting) ? setting.font : 'Roboto';
-        if (font) {
+        var font = setting.font !== 'null' ? setting.font : 'Roboto';
+        if (setting.font) {
             // $('#font-link')
             //     .attr('href', 'https://fonts.googleapis.com/css?family=' + font.replace(/ /g, '+'));
             $('#current-font')
                 .text('.mdl-button,h1,h2,h3,h4,h5,h6,.mdl-layout-title,body{font-family: ' + font + ' }');
+            storage.set(setting);
+            $font.val(font);
         }
-        storage.set(setting);
-        $font.val(font);
     }
 
     function setTheme(setting) {
-        var theme = !$.isEmptyObject(setting) ? setting.theme : 'indigo-pink';
-        $('#theme-link')
-            .attr('href', 'assets/css/material.' + theme + '.min.css');
-        storage.set(setting);
-        $theme.val(theme);
+        var theme = setting.theme !== 'null' ? setting.theme : 'indigo-blue';
+        if (setting.theme) {
+            $('#theme-link')
+                .attr('href', 'assets/css/material.' + theme + '.min.css');
+            storage.set(setting);
+            $theme.val(theme);
+        }
     }
 
     function resetStyle() {

@@ -11,5 +11,13 @@ chrome.app.runtime.onLaunched.addListener(function () {
             'height': 600
         }
     });
+    chrome.app.window.create('sandbox.html', {
+        'bounds': {
+            'width': 400,
+            'height': 400,
+            'left': 400,
+            'top': 0
+        }
+    });
 });
 

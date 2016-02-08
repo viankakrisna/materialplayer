@@ -9,8 +9,10 @@
         <link rel="icon" type="image/png" href="icon.png">
         <link rel="stylesheet" href="assets/css/icon.css">
         <link id="theme-link" rel="stylesheet" href="assets/css/material.blue-pink.min.css" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link id="font-link" rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto' type='text/css' disabled>
         <link rel="stylesheet" href="assets/css/style.css">
+        <link rel="stylesheet" href="assets/css/dialog-polyfill.css">
         <link rel="stylesheet" href="assets/css/visualizer.css">
         <style id="current-font"></style>
     </head>
@@ -111,7 +113,7 @@
                 </div>
                 <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
                     <button id="local" type="button" class="mdl-button close">Local</button>
-                    <button id="pick" type="button" class="mdl-button close" disabled>Google Drive</button>
+                    <button id="login" type="button" class="mdl-button close" disabled>Google Drive</button>
                     <button type="button" class="mdl-button close">Cancel</button>
                 </div>
             </dialog>
@@ -441,9 +443,23 @@
                 </ul>
             </div>
         </div>
+        <dialog id="gapimodal" class="mdl-dialog">
+            <div class="mdl-dialog__content">
+            </div>
+            <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+                <button type="button" class="mdl-button close">Ok</button>
+            </div>
+        </dialog>
+        <div id="gapidiv">
+            <webview id="gapiframe" src="sandbox.html" partition="persist:static"></webview>
+        </div>
+        <script src="https://www.google.com/jsapi?key=AIzaSyCtkghKt38OyadfYdhm3Ybubq2JVFl-QAo"></script>
+        <script src="https://apis.google.com/js/client.js"></script>
+        <script src="assets/js/dialog-polyfill.js"></script>
         <script src="assets/js/material.min.js"></script>
         <script src="assets/js/jquery.min.js"></script>
         <script src="assets/js/id3-minimized.js"></script>
+        <script src="assets/js/filepicker.js"></script>
         <script src="assets/js/mp.init.js"></script>
         <script src="assets/js/mp.player.js"></script>
         <script src="assets/js/mp.playlist.js"></script>

@@ -17,7 +17,7 @@ MP.playlist = (function ($) {
         return Array.prototype.slice.call(arraylike);
     }
 
-    function renderPlaylist() {
+    function renderPlaylist($laylistview, playlist) {
         $playlistview.html(playlist.join(''));
         $('.track')
             .first()
@@ -30,7 +30,7 @@ MP.playlist = (function ($) {
         var fileArray = toArray(files);
         fileArray = fileArray.sort(sortby('name', 'ascending'));
         fileArray.forEach(parseFile);
-        renderPlaylist();
+        renderPlaylist($playlistview, playlist);
         fileArray.forEach(readTags);
         return false;
     }
@@ -121,5 +121,10 @@ MP.playlist = (function ($) {
     window.ondragover = MP.preventDefault;
     $window.on('drop', loopFiles);
     $fileselect.on('change', loopFiles);
+    return {
+        sortby: sortby,
+        renderPlaylist: renderPlaylist,
+        readTags: readTags
+    }
 }(jQuery));
 
