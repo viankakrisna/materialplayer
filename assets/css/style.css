@@ -1,3 +1,15 @@
+#gapiframe {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99999999;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
 #wrapper {
     opacity: 0;
 }
@@ -32,7 +44,7 @@ body {
 }
 
 main {
-    margin-bottom: 130px;
+    margin-bottom: 124px;
 }
 
 table {
@@ -51,11 +63,10 @@ footer {
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 99;
+    z-index: 1;
     text-align: center;
     background: #212121;
     color: white;
-    padding: 0 0 1.5em;
 }
 
 #footer a {
@@ -75,13 +86,14 @@ footer {
     right: 0;
     width: 100%;
     height: 100%;
+    background: black;
 }
 
 .mdl-button--fab {
     position: fixed;
-    bottom: 4.25em;
+    bottom: 4em;
     right: 1em;
-    z-index: 999;
+    z-index: 99;
 }
 
 .mdl-data-table td,
@@ -131,7 +143,6 @@ footer {
 }
 
 .mdl-progress {
-    margin-bottom: 1.3em;
     width: 100%;
     opacity: 0;
 }
@@ -148,16 +159,12 @@ footer {
     min-width: 280px;
 }
 
-html {
-    width: 480px;
-    height: 600px;
-}
-
 #loader {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    bottom:0;
+    bottom: 0;
     margin: auto;
 }
+
