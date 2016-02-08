@@ -9,10 +9,22 @@ MP = (function ($) {
     var $wrapper = $('#wrapper');
     var $as = $('a');
     var app = window.app = {};
-    var storage = window.app.storage = chrome.storage.local;
     /*
         Storage Reset
      */
+    var storage = window.app.storage = (function () {
+        var obj = {
+            get: function (save) {
+                // return localStorage.getItem(save);
+            },
+            set: function () {},
+        };
+        if (chrome && chrome.storage) {
+            obj = chrome.storage.local;
+        }
+        return obj;
+    }());
+
     function storageReset() {
         storage.set({
             'theme': 'indigo-pink'
