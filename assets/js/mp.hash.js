@@ -1,9 +1,12 @@
+(function ($) {
     var $wrapper = $('#wrapper');
     var $window = $(window);
     var $as = $('a');
-    /*
-            Hash Reset
-         */
+    var $player = $('#player');
+    var $header = $('header')
+        /*
+                Hash Reset
+             */
     function resetHash() {
         if (window.location.hash) {
             window.location.hash = '';
@@ -29,5 +32,12 @@
             break;
         }
     }
+    $header.on('click', function (e) {
+        $wrapper.removeClass('on-now-playing');
+    });
+    $player.on('click', function () {
+        $wrapper.toggleClass('on-now-playing');
+    });
     $window.on('hashchange', hashListener);
+}(jQuery))
 

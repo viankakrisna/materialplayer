@@ -4,6 +4,7 @@ MP.dialog = (function ($) {
         Dialog
      */
     var $openFileBtn = $('.show-file-picker-btn');
+    var $opendialog = $('.open-dialog');
     var $openFileDialog = $('#open-file-dialog');
     var $dialog = $('dialog');
     var $close = $('.close');
@@ -14,8 +15,10 @@ MP.dialog = (function ($) {
             dialogPolyfill.registerDialog(dialog);
         }
     });
-    $openFileBtn.on('click', function () {
-        $openFileDialog[0].showModal();
+    $opendialog.on('click', function (e) {
+        e.preventDefault();
+        var $target = $(e.currentTarget.getAttribute('href'));
+        $target[0].showModal();
     });
     $close.on('click', function (e) {
         $(e.target)

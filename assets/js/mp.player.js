@@ -18,7 +18,6 @@ MP.player = (function ($) {
     var $time = $('#time');
     var $fileselect = $('#fileselect');
     var sliderResolution = $slider.attr('max');
-
     (function loadingAnimation() {
         function step(timestamp) {
             if (loading) {
@@ -45,7 +44,8 @@ MP.player = (function ($) {
     }
 
     function play(url) {
-        $player.attr('src', url);
+        $player[0].src = url;
+        $player[0].play();
         loading = true;
     }
 
@@ -53,7 +53,8 @@ MP.player = (function ($) {
         if ($player.attr('src')) {
             $player[0].play();
         } else {
-            $tracks.first()
+            $('.track')
+                .first()
                 .click();
         }
     }

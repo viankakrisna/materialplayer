@@ -11,6 +11,7 @@
         <link id="theme-link" rel="stylesheet" href="assets/css/material.blue-pink.min.css" />
         <link id="font-link" rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto' type='text/css' disabled>
         <link rel="stylesheet" href="assets/css/style.css">
+        <link rel="stylesheet" href="assets/css/visualizer.css">
         <style id="current-font"></style>
     </head>
 
@@ -24,7 +25,7 @@
                 <!-- Tabs -->
                 <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
                     <a href="#playlist" class="mdl-layout__tab is-active">Playlist</a>
-                    <!-- <a href="#visualizer" class="mdl-layout__tab">Visualizer</a> -->
+                    <a href="#visualizer" class="mdl-layout__tab visualizer-element">Visualizer</a>
                     <!-- <a href="#library" class="mdl-layout__tab">Library</a> -->
                     <a href="#nowplaying" class="mdl-layout__tab">Now Playing</a>
                 </div>
@@ -49,14 +50,14 @@
                         <table id="libraryview" class="mdl-data-table mdl-shadow--2dp"></table>
                     </div>
                 </section>
-                <section class="mdl-layout__tab-panel" id="visualizer">
+                <section class="mdl-layout__tab-panel visualizer-element" id="visualizer">
                     <div class="page-content">
-                        <!-- Your content goes here -->
+                        <canvas id="canvas" width="1280" height="720"></canvas>
                     </div>
                 </section>
                 <section class="mdl-layout__tab-panel" id="nowplaying">
                     <div class="page-content">
-                        <video id="player" autoplay preload>
+                        <video id="player" preload>
                             <track id="subtitle" kind="subtitles" default>
                         </video>
                     </div>
@@ -69,8 +70,9 @@
             <div class="mdl-layout__drawer">
                 <span class="mdl-layout-title">Material Player</span>
                 <nav class="mdl-navigation">
-                    <a class="mdl-navigation__link show-file-picker-btn" href="#">Open</a>
-                    <a class="mdl-navigation__link" href="#" id="show-customizer">Customize</a>
+                    <a class="mdl-navigation__link open-dialog" href="#open">Open</a>
+                    <a class="mdl-navigation__link open-dialog" href="#customizer">Customize</a>
+                    <!-- <a class="mdl-navigation__link open-dialog" href="#visualizer-dialog">Visualizer</a> -->
                     <a class="mdl-navigation__link" href="http://github.com/viankakrisna/materialplayer" target="__blank">About</a>
                 </nav>
             </div>
@@ -79,24 +81,30 @@
                 <input type="file" id="fileselect" name="fileselect[]" multiple="multiple">
             </div>
             <footer id="footer" class="paused">
-                <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
-                <div id="info">
-                    <em id="currenttrack">No media.</em>
-                    <span id="time">(00:00 / 00:00)</span>
-                </div>
-                <input id="slider" class="mdl-slider mdl-js-slider" type="range" min="0" max="100000" value="0" tabindex="0">
-                <a id="previous" class="material-icons">skip_previous</a>
-                <a id="play" class="material-icons">play_arrow</a>
-                <a id="pause" class="material-icons">pause</a>
-                <a id="next" class="material-icons">skip_next</a>
-                <a id="loop" class="material-icons">loop</a>
-                <!-- <a id="shuffle" class="material-icons">shuffle</a> -->
-                <!-- <a id="mute" class="material-icons">mute</a> -->
-                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored show-file-picker-btn">
+                <button href="#open" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored open-dialog">
                     <i class="material-icons">add</i>
                 </button>
+                <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
+                <div class="mdl-grid">
+                    <div class="mdl-cell mdl-cell--12-col">
+                        <div id="info">
+                            <em id="currenttrack">No media.</em>
+                            <span id="time">(00:00 / 00:00)</span>
+                        </div>
+                        <input id="slider" class="mdl-slider mdl-js-slider" type="range" min="0" max="100000" value="0" tabindex="0">
+                        <a id="previous" class="material-icons">skip_previous</a>
+                        <a id="play" class="material-icons">play_arrow</a>
+                        <a id="pause" class="material-icons">pause</a>
+                        <a id="next" class="material-icons">skip_next</a>
+                        <a id="loop" class="material-icons">loop</a>
+                        <!-- <a id="shuffle" class="material-icons">shuffle</a> -->
+                        <!-- <a id="mute" class="material-icons">mute</a> -->
+                        <div id="status">
+                        </div>
+                    </div>
+                </div>
             </footer>
-            <dialog id="open-file-dialog" class="mdl-dialog">
+            <dialog id="open" class="mdl-dialog">
                 <div class="mdl-dialog__content">
                     <p>
                         Where do you want to play your music from?
@@ -106,6 +114,20 @@
                     <button id="local" type="button" class="mdl-button close">Local</button>
                     <button id="pick" type="button" class="mdl-button close" disabled>Google Drive</button>
                     <button type="button" class="mdl-button close">Cancel</button>
+                </div>
+            </dialog>
+            <dialog id="visualizer-dialog" class="mdl-dialog">
+                <div class="mdl-dialog__content">
+                    <p>
+                        It's still in beta, do you want to enable it? It's performance heavy!
+                        <p>
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-1">
+                                <input type="checkbox" id="visualizer-switch" class="mdl-switch__input">
+                                <span class="mdl-switch__label"></span>
+                            </label>
+                </div>
+                <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+                    <button type="button" class="mdl-button close">Ok</button>
                 </div>
             </dialog>
             <dialog id="customizer" class="mdl-dialog">
@@ -431,6 +453,7 @@
         <script src="assets/js/mp.customizer.js"></script>
         <script src="assets/js/mp.dialog.js"></script>
         <script src="assets/js/mp.drive.js"></script>
+        <!--<script src="assets/js/mp.visualizer.js"></script>-->
         <script src="assets/js/mp.contextmenu.js"></script>
     </body>
 
