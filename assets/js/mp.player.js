@@ -3,7 +3,6 @@ MP.player = (function ($) {
     /*
         Player View
      */
-    var loading = false;
     var $window = $(window);
     var $playerwrapper = $('footer');
     var $player = $('#player');
@@ -18,17 +17,6 @@ MP.player = (function ($) {
     var $time = $('#time');
     var $fileselect = $('#fileselect');
     var sliderResolution = $slider.attr('max');
-    (function loadingAnimation() {
-        function step(timestamp) {
-            if (loading) {
-                $playerwrapper.addClass('loading');
-            } else {
-                $playerwrapper.removeClass('loading');
-            }
-            window.requestAnimationFrame(step);
-        }
-        window.requestAnimationFrame(step);
-    }());
 
     function formatTime(seconds) {
         var minutes = Math.floor(seconds / 60);
@@ -46,7 +34,7 @@ MP.player = (function ($) {
     function play(url) {
         $player[0].src = url;
         $player[0].play();
-        loading = true;
+        $playerwrapper.addClass('loading');
     }
 
     function playBtnHandler() {
@@ -100,7 +88,7 @@ MP.player = (function ($) {
         var time = '(' + formatTime(e.target.currentTime) + ' / ' + formatTime(e.target.duration) + ')';
         $slider[0].MaterialSlider.change(value);
         $time.html(time);
-        loading = false;
+        $playerwrapper.removeClass('loading');
     }
 
     function onEnded(e) {
