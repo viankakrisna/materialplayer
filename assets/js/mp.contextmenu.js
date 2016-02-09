@@ -35,13 +35,23 @@ MP.contextmenu = (function ($) {
         });
     $('#delete-track')
         .click(function () {
-            $($contextmenu.data('target'))
-                .parents('.track')
-                .remove();
+            var $target = $($contextmenu.data('target'))
+                .parents('.track');
             var id = $($contextmenu.data('target'))
                 .parents('.track')
                 .data('id');
-            MP.db.songs.delete(id);
+            if ($target.parents('#libraryview')
+                .length) {
+                MP.db.songs.delete(id);
+            }
+            $target.remove();
+        });
+    $('#download-track')
+        .click(function () {
+            var $target = $($contextmenu.data('target'))
+                .parents('.track');
+            var link = $target.data('link') || $target.data('src');
+            window.open(link);
         });
     $('#reload-track')
         .click(function () {
