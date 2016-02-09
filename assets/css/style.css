@@ -73,7 +73,7 @@ tr {
 }
 
 footer {
-    position: fixed;
+    position: absolute;
     line-height: 1em;
     bottom: 0;
     left: 0;
