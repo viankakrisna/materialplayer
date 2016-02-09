@@ -9,7 +9,7 @@ MP.playlist = (function ($) {
     var ids = [];
     var $playlistview = $('#playlist-view');
     var $tracks = $('.track');
-    var tableheading = "<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th><th>File</th></tr>";
+    var tableheading = "<thead><tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th><th>File</th></tr></thead>";
     var $fileselect = $('#fileselect');
     var $wrapper = $('#wrapper');
     var $subtitle = $('#subtitle');
@@ -21,6 +21,24 @@ MP.playlist = (function ($) {
     function renderPlaylist($laylistview, playlist) {
         $playlistview.html(playlist.join(''));
         $window.trigger('mp:playlistrendered');
+    }
+
+    function traverseFileTree(item, path) {
+        path = path || "";
+        if (item.isFile) {
+            // Get file
+            item.file(function (file) {
+                console.log("File:", path + file.name);
+            });
+        } else if (item.isDirectory) {
+            // Get folder contents
+            var dirReader = item.createReader();
+            dirReader.readEntries(function (entries) {
+                for (var i = 0; i < entries.length; i++) {
+                    traverseFileTree(entries[i], path + item.name + "/");
+                }
+            });
+        }
     }
 
     function loopFiles(e) {
@@ -125,6 +143,7 @@ MP.playlist = (function ($) {
     $window.on('drop', loopFiles);
     $fileselect.on('change', loopFiles);
     return {
+        tableheading: tableheading,
         sortby: sortby,
         renderPlaylist: renderPlaylist,
         readTags: readTags

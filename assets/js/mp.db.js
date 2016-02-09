@@ -2,6 +2,7 @@ window.MP = window.MP || {};
 MP.db = (function ($) {
     var $window = $(window);
     var db = new Dexie("MP");
+    var defaultTableContent = '<thead><th>No Songs</th></thead><tbody><td>No Songs</td></tbody>';
     db.version(1)
         .stores({
             songs: 'id,artist,album,track,title,file,dom',
@@ -26,16 +27,48 @@ MP.db = (function ($) {
                         console.log(e);
                     });
             });
+            $window.on('load', function () {
+                $('#fixed-header-drawer-exp')
+                    .on('keyup', function (e) {
+                        var value = $(this)
+                            .val();
+                        $('#libraryview')
+                            .DataTable()
+                            .search($(this)
+                                .val())
+                            .draw();
+                    });
+            })
             $window.on('load mp:databaseinserted', function () {
-                var count = 1;
+                var heading = false;
                 $('#libraryview')
-                    .html('');
+                    .DataTable()
+                    .destroy();
+                $('#libraryview')
+                    .html(defaultTableContent);
                 db.songs.each(function (song) {
                         var dom = $(song.dom);
                         dom.attr('data-src', URL.createObjectURL(song.file));
+                        if (heading) {
+                            $('#libraryview')
+                                .append(dom)
+                        } else {
+                            $('#libraryview')
+                                .html(MP.playlist.tableheading);
+                            $('#libraryview')
+                                .append(dom)
+                            heading = true;
+                        }
+                    })
+                    .then(function () {
                         $('#libraryview')
-                            .append(dom);
-                            MP.log(dom);
+                            .DataTable({
+                                paging: false,
+                                order: [
+                                    [1, "asc"],
+                                    [0, "asc"]
+                                ],
+                            });
                     })
                     .catch(function (error) {
                         console.log(error);

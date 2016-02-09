@@ -2,6 +2,15 @@
     opacity: 0;
 }
 
+.dataTables_filter {
+    display: none;
+}
+
+.dataTables_info {
+    padding: 1em;
+    text-align: center;
+}
+
 #fileselect {
     display: none;
 }
