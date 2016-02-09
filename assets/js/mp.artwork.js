@@ -1,7 +1,7 @@
 window.MP = window.MP || {};
 MP.artwork = (function ($) {
     var $window = $(window);
-    $window.on('mp:metadataready', fetchArtworks);
+    $window.on('mp:played', fetchArtworks);
 
     function fetchArtworks(event, el) {
         var artist = $(el)
@@ -12,7 +12,6 @@ MP.artwork = (function ($) {
             .text();
         album = album.substring(0, album.indexOf('('));
         var query = artist + '+' + album;
-        console.log(query);
         var query = 'https://itunes.apple.com/search?term=' + artist + '+' + album;
         $.ajax({
             url: query,
@@ -22,10 +21,7 @@ MP.artwork = (function ($) {
             dataType: 'jsonp',
             success: function (resp) {
                 el.attr('data-artwork', resp.results[0].artworkUrl100.replace('100x100', '600x600'));
-                if ($(el)
-                    .hasClass('active')) {
-                    showArtwork();
-                }
+                showArtwork();
             },
             error: function (e) {
                 console.log(e.message);

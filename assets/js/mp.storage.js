@@ -36,21 +36,37 @@ MP.storage = (function () {
         Storage Reset
      */
     var storage = (function () {
-        var obj = {
-            get: function (key, callback) {
-                var result = {};
-                result[key] = localStorage.getItem(key);
-                callback(result);
-            },
-            set: function (obj) {
-                Object.keys(obj)
-                    .forEach(function (key) {
-                        localStorage.setItem(key, obj[key]);
-                    });
-            },
-        };
-        if (chrome && chrome.storage) {
+        var obj = {};
+        var storage = null;
+        switch (true) {
+        case (chrome && chrome.storage):
             obj = chrome.storage.local;
+            break;
+        case window.LargeLocalStorage:
+            storage = new LargeLocalStorage({
+                size: 500 * 1024 * 1024,
+                name: 'library'
+            });
+            storage.initialized.then(function (grantedCapacity) {
+                if (grantedCapacity != -1 && grantedCapacity != desiredCapacity) {
+                    console.log(storage);
+                }
+            });
+            break;
+        default:
+            obj = {
+                get: function (key, callback) {
+                    var result = {};
+                    result[key] = localStorage.getItem(key);
+                    callback(result);
+                },
+                set: function (obj) {
+                    Object.keys(obj)
+                        .forEach(function (key) {
+                            localStorage.setItem(key, obj[key]);
+                        });
+                }
+            }
         }
         return obj;
     }());

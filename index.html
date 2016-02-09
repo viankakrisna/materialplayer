@@ -28,7 +28,7 @@
                 <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
                     <a href="#playlist" class="mdl-layout__tab is-active">Playlist</a>
                     <a href="#visualizer" class="mdl-layout__tab visualizer-element">Visualizer</a>
-                    <!-- <a href="#library" class="mdl-layout__tab">Library</a> -->
+                    <a href="#library" class="mdl-layout__tab">Library</a>
                     <a href="#nowplaying" class="mdl-layout__tab">Now Playing</a>
                 </div>
             </header>
@@ -103,6 +103,7 @@
                         </div>
                     </div>
                 </div>
+                <div id="log"></div>
             </footer>
             <div id="subtitle" class="srt" data-video="player" data-srt=""></div>
             <dialog id="open" class="mdl-dialog">
@@ -456,8 +457,10 @@
         <script src="https://www.google.com/jsapi?key=AIzaSyCtkghKt38OyadfYdhm3Ybubq2JVFl-QAo"></script>
         <script src="https://apis.google.com/js/client.js"></script>
         <script src="assets/js/dialog-polyfill.js"></script>
+        <script src="assets/js/Dexie.min.js"></script>
         <script src="assets/js/material.min.js"></script>
         <script src="assets/js/jquery.min.js"></script>
+        <script src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
         <script src="assets/js/jquery.srt.js"></script>
         <script src="assets/js/id3-minimized.js"></script>
         <script src="assets/js/filepicker.js"></script>
@@ -470,6 +473,8 @@
         <script src="assets/js/mp.dialog.js"></script>
         <script src="assets/js/mp.drive.js"></script>
         <script src="assets/js/mp.artwork.js"></script>
+        <script src="assets/js/mp.db.js"></script>
+        <script src="assets/js/mp.log.js"></script>
         <!--<script src="assets/js/mp.visualizer.js"></script>-->
         <script src="assets/js/mp.contextmenu.js"></script>
     </body>

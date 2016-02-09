@@ -71,12 +71,17 @@ MP.player = (function ($) {
         $activeTrack.find('td')
             .each(function (index, info) {
                 var $info = $(info);
-                if (index && $info.text()) {
+                if (index && $info.text() && index !== 4) {
                     currentTrack += $info.text() + ' - ';
                 }
             });
+        // if (!currenttrack){
+        //     currenttrack = $activeTrack.text();
+        // }
         $currenttrack.html(currentTrack);
-        $('[href="#nowplaying"]').find('span').click();
+        $('[href="#nowplaying"]')
+            .find('span')
+            .click();
         $window.trigger('mp:played', [$activeTrack]);
         srt();
     }

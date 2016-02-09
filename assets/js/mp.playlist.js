@@ -103,7 +103,7 @@ MP.playlist = (function ($) {
                     .html(tags.album);
                 $track.find('.track-title')
                     .html(tags.title);
-                $window.trigger('mp:metadataready', [$track]);
+                $window.trigger('mp:metadataready', [$track, tags, file]);
             }, {
                 dataReader: ID3.FileAPIReader(file)
             });

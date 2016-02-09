@@ -40,6 +40,7 @@
             var accessToken = gapi.auth.getToken()
                 .access_token;
             var xhr = new XMLHttpRequest();
+            var $track = $($playlistview.find('tr')[index + 1]);
             if (fromLink) {
                 xhr.open('GET', $track.data('src'));
                 xhr.responseType = "blob";
@@ -47,15 +48,15 @@
                 xhr.onload = function () {
                     var file = new File([xhr.response], 'blob');
                     var url = URL.createObjectURL(file);
-                    var $track = $($playlistview.find('tr')[index + 1]);
                     var oldSrc = $track.data('src');
                     $track.data('src', url);
                     $track.attr('data-src', url);
                     $track.attr('data-link', oldSrc);
                     readTags(file, index);
+                    MP.log(file);
                 };
                 xhr.onerror = function () {
-                    downloadFile(fileObj, index, true);
+                    downloadFile(fileObj, index, false);
                 };
                 xhr.send();
             } else {
@@ -65,7 +66,6 @@
                 xhr.onload = function () {
                     var file = new File([xhr.response], 'blob');
                     var url = URL.createObjectURL(file);
-                    var $track = $($playlistview.find('tr')[index + 1]);
                     var oldSrc = $track.data('src');
                     $track.data('src', url);
                     $track.attr('data-src', url);
