@@ -20,6 +20,7 @@
                 // console.log(fileList);
                 fileList = fileList.sort(sortby('name', 'ascending'));
                 fileList.forEach(parseGoogleDrive);
+                console.log(playlist);
                 renderPlaylist($playlistview, playlist);
                 ids.forEach(getFileUrl);
             }
@@ -31,7 +32,7 @@
             'fileId': fileId
         });
         request.execute(function (resp) {
-            downloadFile(resp, index, true);
+            downloadFile(resp, index);
         });
     }
 
@@ -40,7 +41,6 @@
             var accessToken = gapi.auth.getToken()
                 .access_token;
             var xhr = new XMLHttpRequest();
-            var $track = $($playlistview.find('tr')[index + 1]);
             if (fromLink) {
                 xhr.open('GET', $track.data('src'));
                 xhr.responseType = "blob";
@@ -48,15 +48,15 @@
                 xhr.onload = function () {
                     var file = new File([xhr.response], 'blob');
                     var url = URL.createObjectURL(file);
+                    var $track = $($playlistview.find('tr')[index + 1]);
                     var oldSrc = $track.data('src');
                     $track.data('src', url);
                     $track.attr('data-src', url);
                     $track.attr('data-link', oldSrc);
                     readTags(file, index);
-                    MP.log(file);
                 };
                 xhr.onerror = function () {
-                    downloadFile(fileObj, index, false);
+                    downloadFile(fileObj, index, true);
                 };
                 xhr.send();
             } else {
@@ -66,6 +66,7 @@
                 xhr.onload = function () {
                     var file = new File([xhr.response], 'blob');
                     var url = URL.createObjectURL(file);
+                    var $track = $($playlistview.find('tr')[index + 1]);
                     var oldSrc = $track.data('src');
                     $track.data('src', url);
                     $track.attr('data-src', url);
@@ -81,13 +82,13 @@
     }
 
     function parseGoogleDrive(file, index) {
-        var row = ['<tr class="track" data-id="' + file.id + '" data-src="' + 'https://docs.google.com/uc?id=' + file.id + '&export=download' + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + file.name + '</td></tr>'].join('');
         if (!index) {
             ids = [];
             playlist = [];
             playlist.push("<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th><th>File</th></tr>");
         }
         ids.push(file.id);
+        var row = ['<tr class="track" data-id="' + file.id + '" data-src="' + 'https://docs.google.com/uc?id=' + file.id + '&export=download' + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + file.name + '</td></tr>'].join('');
         playlist.push(row);
     }
 }(jQuery));

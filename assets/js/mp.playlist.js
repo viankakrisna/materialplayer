@@ -18,7 +18,7 @@ MP.playlist = (function ($) {
         return Array.prototype.slice.call(arraylike);
     }
 
-    function renderPlaylist($laylistview, playlist) {
+    function renderPlaylist($playlistview, playlist) {
         $playlistview.html(playlist.join(''));
         $window.trigger('mp:playlistrendered');
     }
@@ -110,10 +110,10 @@ MP.playlist = (function ($) {
         }
     }
 
-    function readTags(file, index) {
+    function readTags(file, index, $track) {
         if (file.name.indexOf('.mp4') === -1) {
             ID3.loadTags('', function () {
-                var $track = $($playlistview.find('tr')[index + 1]);
+                var $track = $track || $($playlistview.find('tr')[index + 1]);
                 var tags = ID3.getAllTags('');
                 $track.find('.track-artist')
                     .html(tags.artist);
@@ -121,6 +121,7 @@ MP.playlist = (function ($) {
                     .html(tags.album);
                 $track.find('.track-title')
                     .html(tags.title);
+                console.log(tags);
                 $window.trigger('mp:metadataready', [$track, tags, file]);
             }, {
                 dataReader: ID3.FileAPIReader(file)
@@ -132,8 +133,8 @@ MP.playlist = (function ($) {
         $wrapper.on('click', '.track', function (e) {
             var $this = $(this);
             var url = $this.data('src');
-            var $siblings = $this.siblings();
-            $siblings.removeClass('active');
+            $('.track')
+                .removeClass('active');
             $this.addClass('active');
             MP.player.play(url);
         });
@@ -147,6 +148,6 @@ MP.playlist = (function ($) {
         sortby: sortby,
         renderPlaylist: renderPlaylist,
         readTags: readTags
-    }
+    };
 }(jQuery));
 

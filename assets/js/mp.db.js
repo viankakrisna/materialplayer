@@ -20,8 +20,8 @@ MP.db = (function ($) {
                         file: file,
                     })
                     .then(function () {
-                        $window.trigger('mp:databaseinserted')
-                        console.log('Database inserted for:', arguments)
+                        $window.trigger('mp:databaseinserted');
+                        console.log('Database inserted for:', arguments);
                     })
                     .catch(function (e) {
                         console.log(e);
@@ -38,7 +38,7 @@ MP.db = (function ($) {
                                 .val())
                             .draw();
                     });
-            })
+            });
             $window.on('load mp:databaseinserted', function () {
                 var heading = false;
                 $('#libraryview')
@@ -49,14 +49,15 @@ MP.db = (function ($) {
                 db.songs.each(function (song) {
                         var dom = $(song.dom);
                         dom.attr('data-src', URL.createObjectURL(song.file));
+                        dom.attr('data-id', song.id);
                         if (heading) {
                             $('#libraryview')
-                                .append(dom)
+                                .append(dom);
                         } else {
                             $('#libraryview')
                                 .html(MP.playlist.tableheading);
                             $('#libraryview')
-                                .append(dom)
+                                .append(dom);
                             heading = true;
                         }
                     })

@@ -12,7 +12,7 @@ MP.artwork = (function ($) {
             .text();
         album = album.substring(0, album.indexOf('('));
         var query = artist + '+' + album;
-        var query = 'https://itunes.apple.com/search?term=' + artist + '+' + album;
+        query = 'https://itunes.apple.com/search?term=' + artist + '+' + album;
         $.ajax({
             url: query,
             async: false,
@@ -35,5 +35,5 @@ MP.artwork = (function ($) {
         $('#player')
             .attr('poster', src);
     }
-}(jQuery))
+}(jQuery));
 
