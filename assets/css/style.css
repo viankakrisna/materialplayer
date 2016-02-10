@@ -223,7 +223,7 @@ footer {
     margin: auto;
 }
 
-#info {
+#currenttrackwrapper {
     overflow-x: scroll;
     overflow-y: visible;
 }
