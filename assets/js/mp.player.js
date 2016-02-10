@@ -73,7 +73,7 @@ MP.player = (function ($) {
     }
 
     function onPlay() {
-        var currentTrack = '';
+        var currentTrack = [];
         $playerwrapper.removeClass('paused');
         $playerwrapper.addClass('played');
         var $activeTrack = $('.track.active');
@@ -81,13 +81,10 @@ MP.player = (function ($) {
             .each(function (index, info) {
                 var $info = $(info);
                 if (index && $info.text() && index !== 4) {
-                    currentTrack += $info.text() + ' - ';
+                    currentTrack.push( $info.text() );
                 }
             });
-        // if (!currenttrack){
-        //     currenttrack = $activeTrack.text();
-        // }
-        $currenttrack.html(currentTrack);
+        $currenttrack.html(currentTrack.join(' - '));
         $('[href="#nowplaying"]')
             .find('span')
             .click();

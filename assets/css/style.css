@@ -24,6 +24,7 @@
     cursor: pointer;
     transition: 250ms;
 }
+
 #contextmenu li:focus {
     background: #EEE;
 }
@@ -57,7 +58,7 @@
 }
 
 #info {
-    margin-bottom: 1em;
+    line-height: 1.5em;
 }
 
 body {
@@ -200,6 +201,7 @@ footer {
 .mdl-progress {
     width: 100%;
     opacity: 0;
+    margin-bottom: -10px;
 }
 
 .loading .mdl-progress {
@@ -225,7 +227,12 @@ footer {
 
 #currenttrackwrapper {
     overflow-x: scroll;
-    overflow-y: visible;
+    overflow-y: hidden;
+}
+
+#currenttrackwrapper::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
 }
 
 #currenttrack {
@@ -241,6 +248,7 @@ footer {
 dialog[open] {
     animation: dialog 250ms;
 }
+
 .page-content {
     min-height: 100vh;
     overflow-x: scroll;
