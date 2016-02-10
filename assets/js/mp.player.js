@@ -53,15 +53,23 @@ MP.player = (function ($) {
     }
 
     function prevBtnHandler() {
-        $('.track.active')
-            .previous()
-            .click();
+        if ($shuffle.hasClass('active')) {
+            shuffle();
+        } else {
+            $('.track.active')
+                .previous()
+                .click();
+        }
     }
 
     function nextBtnHandler() {
-        $('.track.active')
-            .next()
-            .click();
+        if ($shuffle.hasClass('active')) {
+            shuffle();
+        } else {
+            $('.track.active')
+                .next()
+                .click();
+        }
     }
 
     function onPlay() {

@@ -211,4 +211,15 @@ footer {
     bottom: 0;
     margin: auto;
 }
-
+#info {
+    overflow-x: scroll;
+    overflow-y: visible;
+}
+#currenttrack {
+    white-space: nowrap;
+}
+@media (max-width: 768px){
+    .mdl-button--fab {
+        bottom: 7em;
+    }
+}
