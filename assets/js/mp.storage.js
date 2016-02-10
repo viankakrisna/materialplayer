@@ -37,21 +37,9 @@ MP.storage = (function () {
      */
     var storage = (function () {
         var obj = {};
-        var storage = null;
         switch (true) {
-        case (chrome && chrome.storage):
-            obj = chrome.storage.local;
-            break;
-        case window.LargeLocalStorage:
-            storage = new LargeLocalStorage({
-                size: 500 * 1024 * 1024,
-                name: 'library'
-            });
-            storage.initialized.then(function (grantedCapacity) {
-                if (grantedCapacity != -1 && grantedCapacity != desiredCapacity) {
-                    console.log(storage);
-                }
-            });
+        case (window.chrome && window.chrome.storage):
+            obj = window.chrome.storage.local;
             break;
         default:
             obj = {
@@ -66,7 +54,7 @@ MP.storage = (function () {
                             localStorage.setItem(key, obj[key]);
                         });
                 }
-            }
+            };
         }
         return obj;
     }());
