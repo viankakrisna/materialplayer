@@ -10,9 +10,11 @@ MP.artwork = (function ($) {
         var album = $(el)
             .find('.track-album')
             .text();
+        if (album.indexOf('(') !== -1) {
+            album = album.substring(0, album.indexOf('('));
+        }
         var query = artist + '+' + album;
         query = 'https://itunes.apple.com/search?term=' + query + '&entity=album&atrribute=albumTerm';
-        console.log(query);
         $.ajax({
             url: query,
             async: false,
@@ -20,7 +22,6 @@ MP.artwork = (function ($) {
             contentType: "application/json",
             dataType: 'jsonp',
             success: function (resp) {
-                console.log(resp);
                 el.attr('data-artwork', resp.results[0].artworkUrl100.replace('100x100', '600x600'));
                 showArtwork();
             },

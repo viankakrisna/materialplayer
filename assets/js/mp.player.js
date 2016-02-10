@@ -9,6 +9,7 @@ MP.player = (function ($) {
     var $subtitle = $('#subtitle');
     var $slider = $('#slider');
     var $loop = $('#loop');
+    var $shuffle = $('#shuffle');
     var $play = $('#play');
     var $pause = $('#pause');
     var $previous = $('#previous');
@@ -104,11 +105,22 @@ MP.player = (function ($) {
             e.target.pause();
             e.target.currentTime = '0';
             e.target.play();
+        } else if ($shuffle.hasClass('active')) {
+            shuffle();
         } else {
             $('.track.active')
                 .next()
                 .click();
         }
+    }
+
+    function shuffle() {
+        var $siblings = $('.track.active')
+            .siblings('.track');
+        var random = Math.floor(Math.random() * $siblings.length);
+        $($siblings)
+            .eq(random)
+            .click();
     }
 
     function toggleActive(e) {
@@ -136,6 +148,7 @@ MP.player = (function ($) {
         $player.on('ended', onEnded);
         $player[0].ontimeupdate = onTimeupdate;
         $loop.on('click', toggleActive);
+        $shuffle.on('click', toggleActive);
         $playerwrapper.on('keyup', keyupListener);
         $slider.on("change input", seek);
         $window.on('mp:playlistrendered', playFirstSong);

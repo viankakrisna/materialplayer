@@ -39,12 +39,12 @@
     right: 0;
     top: 0;
 }
-
+#shuffle,
 #loop {
     opacity: 0.5;
     transform: scale(0.5)
 }
-
+#shuffle.active,
 #loop.active {
     transform: scale(1);
     opacity: 1;
