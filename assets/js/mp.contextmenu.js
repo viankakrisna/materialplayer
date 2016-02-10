@@ -11,11 +11,16 @@ MP.contextmenu = (function ($) {
 
     function contextMenuHandler(e) {
         e.preventDefault();
+        var x = e.clientX;
+        var y = e.clientY;
+        if (e.clientX > window.innerWidth - 100) {
+            x = x - 100;
+        }
         $contextmenu.hide()
             .css({
                 position: "fixed",
-                top: e.clientY,
-                left: e.clientX,
+                top: y,
+                left: x,
                 zIndex: 9999
             })
             .show('fast')
