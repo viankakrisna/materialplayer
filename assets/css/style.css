@@ -237,6 +237,9 @@ footer {
 dialog[open] {
     animation: dialog 250ms;
 }
+.track td {
+    pointer-events: none;
+}
 
 @keyframes dialog {
     0% {
