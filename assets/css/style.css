@@ -39,11 +39,13 @@
     right: 0;
     top: 0;
 }
+
 #shuffle,
 #loop {
     opacity: 0.5;
     transform: scale(0.5)
 }
+
 #shuffle.active,
 #loop.active {
     transform: scale(1);
@@ -176,6 +178,11 @@ footer {
     overflow: visible;
 }
 
+header,
+footer {
+    transition: 250ms;
+}
+
 .on-now-playing header,
 .on-now-playing footer {
     opacity: 0;
@@ -211,15 +218,34 @@ footer {
     bottom: 0;
     margin: auto;
 }
+
 #info {
     overflow-x: scroll;
     overflow-y: visible;
 }
+
 #currenttrack {
     white-space: nowrap;
 }
-@media (max-width: 768px){
+
+@media (max-width: 768px) {
     .mdl-button--fab {
         bottom: 7em;
     }
 }
+
+dialog[open] {
+    animation: dialog 250ms;
+    transform-origin: bottom right;
+}
+
+@keyframes dialog {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
