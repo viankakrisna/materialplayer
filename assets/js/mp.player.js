@@ -17,6 +17,7 @@ MP.player = (function ($) {
     var $currenttrack = $('#currenttrack');
     var $time = $('#time');
     var $fileselect = $('#fileselect');
+    var $wrapper = $('#wrapper');
     var sliderResolution = $slider.attr('max');
 
     function formatTime(seconds) {
@@ -74,14 +75,14 @@ MP.player = (function ($) {
 
     function onPlay() {
         var currentTrack = [];
+        var $activeTrack = $('.track.active');
         $playerwrapper.removeClass('paused');
         $playerwrapper.addClass('played');
-        var $activeTrack = $('.track.active');
         $activeTrack.find('td')
             .each(function (index, info) {
                 var $info = $(info);
                 if (index && $info.text() && index !== 4) {
-                    currentTrack.push( $info.text() );
+                    currentTrack.push($info.text());
                 }
             });
         $currenttrack.html(currentTrack.join(' - '));
@@ -135,10 +136,13 @@ MP.player = (function ($) {
 
     function keyupListener(e) {
         if (e.keyCode == 32) {
-            if ($playerwrapper.hasClass('played')) {
-                $pause.click();
-            } else {
-                $play.click();
+            if (e.target.tagName !== 'INPUT') {
+                e.preventDefault();
+                if ($playerwrapper.hasClass('played')) {
+                    $pause.click();
+                } else {
+                    $play.click();
+                }
             }
         }
     }
@@ -154,7 +158,7 @@ MP.player = (function ($) {
         $player[0].ontimeupdate = onTimeupdate;
         $loop.on('click', toggleActive);
         $shuffle.on('click', toggleActive);
-        $playerwrapper.on('keyup', keyupListener);
+        $wrapper.on('keyup', keyupListener);
         $slider.on("change input", seek);
         $window.on('mp:playlistrendered', playFirstSong);
     }
