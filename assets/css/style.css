@@ -236,7 +236,6 @@ footer {
 
 dialog[open] {
     animation: dialog 250ms;
-    transform-origin: bottom right;
 }
 
 @keyframes dialog {
