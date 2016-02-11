@@ -1,6 +1,6 @@
 window.MP = window.MP || {};
 if (!Object.keys) {
-    Object.keys = (function () {
+    Object.keys = (function() {
         'use strict';
         var hasOwnProperty = Object.prototype.hasOwnProperty,
             hasDontEnumBug = !({
@@ -9,7 +9,7 @@ if (!Object.keys) {
             .propertyIsEnumerable('toString'),
             dontEnums = ['toString', 'toLocaleString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor'],
             dontEnumsLength = dontEnums.length;
-        return function (obj) {
+        return function(obj) {
             if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
                 throw new TypeError('Object.keys called on non-object');
             }
@@ -31,30 +31,30 @@ if (!Object.keys) {
         };
     }());
 }
-MP.storage = (function () {
+MP.storage = (function() {
     /*
         Storage Reset
      */
-    var storage = (function () {
+    var storage = (function() {
         var obj = {};
         switch (true) {
-        case (window.chrome && window.chrome.storage):
-            obj = window.chrome.storage.local;
-            break;
-        default:
-            obj = {
-                get: function (key, callback) {
-                    var result = {};
-                    result[key] = localStorage.getItem(key);
-                    callback(result);
-                },
-                set: function (obj) {
-                    Object.keys(obj)
-                        .forEach(function (key) {
-                            localStorage.setItem(key, obj[key]);
-                        });
-                }
-            };
+            case (window.chrome && window.chrome.storage):
+                obj = window.chrome.storage.local;
+                break;
+            default:
+                obj = {
+                    get: function(key, callback) {
+                        var result = {};
+                        result[key] = localStorage.getItem(key);
+                        callback(result);
+                    },
+                    set: function(obj) {
+                        Object.keys(obj)
+                            .forEach(function(key) {
+                                localStorage.setItem(key, obj[key]);
+                            });
+                    }
+                };
         }
         return obj;
     }());
@@ -67,6 +67,22 @@ MP.storage = (function () {
             'font': 'Roboto'
         });
     }
+
+
+    function registerSW(scope, path) {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register(path, {
+                scope: scope
+            }).then(function(reg) {
+                // registration worked
+                console.log('Registration succeeded. Scope is ' + reg.scope);
+            }).catch(function(error) {
+                // registration failed
+                console.log('Registration failed with ' + error);
+            });
+        }
+    }
+    registerSW('./', '/materialplayer/sw.js');
+
     return storage;
 }());
-

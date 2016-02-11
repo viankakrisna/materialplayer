@@ -1,5 +1,5 @@
 {
-  "name": "material-music-player",
+  "name": "material-player",
   "version": "1.0.0",
   "description": "Music player for browser. Material designed.",
   "main": "index.js",
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/viankakrisna/Material-Music-Player/issues"
   },
-  "homepage": "https://github.com/viankakrisna/Material-Music-Player#readme"
+  "homepage": "https://github.com/viankakrisna/Material-Music-Player#readme",
+  "devDependencies": {
+    "gulp-concat": "^2.6.0"
+  }
 }

@@ -1,14 +1,11 @@
 window.MP = window.MP || {};
-MP = (function ($) {
+MP.init = (function($) {
     'use strict';
     /*
         Helper Variables
      */
-    var $window = $(window);
-    var $document = $(document);
-    var $as = $('a');
-    var app = window.app = {};
     var $wrapper = $('#wrapper');
+    var $window = $(window);
 
     function preventDefault(e) {
         e.preventDefault();
@@ -18,11 +15,11 @@ MP = (function ($) {
         $wrapper.css('opacity', 1);
     }
 
-    function getBlob(src, callback) {
+    function getBlob(url, callback) {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', src, true);
+        xhr.open('GET', url, true);
         xhr.responseType = 'blob';
-        xhr.onload = function (e) {
+        xhr.onload = function(e) {
             var blob = window.URL.createObjectURL(this.response);
             callback(blob);
         };
@@ -30,7 +27,10 @@ MP = (function ($) {
     }
     $window.on('load', init);
     return {
-        preventDefault: preventDefault
+        preventDefault: preventDefault,
+        libraryview: $('#libraryview'),
+        databaseName: 'MP',
+        databaseSchema: 'id,artist,album,track,title,file,dom',
+        defaultTableContent: '<thead><th>No Songs</th></thead><tbody><td>No Songs</td></tbody>'
     };
 })(jQuery);
-

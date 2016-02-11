@@ -17,6 +17,10 @@
     padding: 0.5em 0;
 }
 
+.mdl-layout__tab-panel.is-active {
+    animation: slideIn 250ms;
+}
+
 #contextmenu li {
     display: block;
     margin: 0;
@@ -53,7 +57,7 @@
 
 #shuffle.active,
 #loop.active {
-    transform: scale(1);
+    transform: scale(0.75);
     opacity: 1;
 }
 
@@ -146,6 +150,14 @@ footer {
     bottom: 4em;
     right: 1em;
     z-index: 99;
+}
+
+.mdl-button--fab {
+    animation: zoomIn 250ms;
+}
+
+.mdl-button--fab:hover {
+    animation: rotate 250ms;
 }
 
 .mdl-data-table td,
@@ -246,7 +258,7 @@ footer {
 }
 
 dialog[open] {
-    animation: dialog 250ms;
+    animation: zoomIn 250ms;
 }
 
 .page-content {
@@ -263,7 +275,7 @@ dialog[open] {
     user-select: none;
 }
 
-@keyframes dialog {
+@keyframes zoomIn {
     0% {
         transform: scale(0);
     }
@@ -273,3 +285,22 @@ dialog[open] {
     }
 }
 
+@keyframes slideIn {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(360deg);
+    }
+}

@@ -140,7 +140,7 @@ MP.playlist = (function ($) {
         });
     }
     setupTrackEvents();
-    window.ondragover = MP.preventDefault;
+    window.ondragover = MP.init.preventDefault;
     $window.on('drop', loopFiles);
     $fileselect.on('change', loopFiles);
     return {

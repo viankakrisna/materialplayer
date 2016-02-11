@@ -1,4 +1,4 @@
-(function ($) {
+(function($) {
     var sortby = MP.playlist.sortby;
     var renderPlaylist = MP.playlist.renderPlaylist;
     var readTags = MP.playlist.readTags;
@@ -12,26 +12,30 @@
     window.onload = initPicker;
 
     function initPicker() {
-        var picker = new FilePicker({
-            apiKey: 'AIzaSyBMDM4v6cjmt3k00QO7PAZn2MGg8hRvSv4',
-            clientId: '1868175267',
-            buttonEl: $('#login')[0],
-            onSelect: function (fileList) {
-                // console.log(fileList);
-                fileList = fileList.sort(sortby('name', 'ascending'));
-                fileList.forEach(parseGoogleDrive);
-                console.log(playlist);
-                renderPlaylist($playlistview, playlist);
-                ids.forEach(getFileUrl);
-            }
-        });
+        if (window.gapi && window.google && window.FilePicker) {
+            var picker = new FilePicker({
+                apiKey: 'AIzaSyBMDM4v6cjmt3k00QO7PAZn2MGg8hRvSv4',
+                clientId: '1868175267',
+                buttonEl: $('#login')[0],
+                onSelect: function(fileList) {
+                    // console.log(fileList);
+                    fileList = fileList.sort(sortby('name', 'ascending'));
+                    fileList.forEach(parseGoogleDrive);
+                    console.log(playlist);
+                    renderPlaylist($playlistview, playlist);
+                    ids.forEach(getFileUrl);
+                }
+            });
+        } else {
+            console.log('Google Drive integration could not start.');
+        }
     }
 
     function getFileUrl(fileId, index) {
         var request = gapi.client.drive.files.get({
             'fileId': fileId
         });
-        request.execute(function (resp) {
+        request.execute(function(resp) {
             downloadFile(resp, index);
         });
     }
@@ -45,7 +49,7 @@
                 xhr.open('GET', $track.data('src'));
                 xhr.responseType = "blob";
                 xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-                xhr.onload = function () {
+                xhr.onload = function() {
                     var file = new File([xhr.response], 'blob');
                     var url = URL.createObjectURL(file);
                     var $track = $($playlistview.find('tr')[index + 1]);
@@ -55,7 +59,7 @@
                     $track.attr('data-link', oldSrc);
                     readTags(file, index);
                 };
-                xhr.onerror = function () {
+                xhr.onerror = function() {
                     downloadFile(fileObj, index, true);
                 };
                 xhr.send();
@@ -63,7 +67,7 @@
                 xhr.open('GET', fileObj.downloadUrl);
                 xhr.responseType = "blob";
                 xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-                xhr.onload = function () {
+                xhr.onload = function() {
                     var file = new File([xhr.response], 'blob');
                     var url = URL.createObjectURL(file);
                     var $track = $($playlistview.find('tr')[index + 1]);
@@ -73,7 +77,7 @@
                     $track.attr('data-link', oldSrc);
                     readTags(file, index);
                 };
-                xhr.onerror = function () {
+                xhr.onerror = function() {
                     downloadFile(fileObj, index, true);
                 };
                 xhr.send();
@@ -92,4 +96,3 @@
         playlist.push(row);
     }
 }(jQuery));
-

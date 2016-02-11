@@ -1,0 +1,24 @@
+CACHE MANIFEST
+# default 18rem 
+
+CACHE:
+/
+/assets/application-01aa6d9a5aa55735b4f0533e0d3c8c8bee031b8e9a302ae568966336b91926dc.js
+//cdn.devdocs.io/assets/application-4d7db2dd1483235cdfa09d5ccfd12a0841c31ea3ab92016737ea872568adade0.css
+//cdn.devdocs.io/assets/application-dark-aefae7497ddc38b8763668f0b96b285354df4b24e83599070c32b101fa780e93.css
+//cdn.devdocs.io/assets/icons-57c10d9de5e6858cf775c189d15ef0aa395241926a6bac18c1271723fe0dfefd.png
+//cdn.devdocs.io/assets/icons@2x-199d0752f97dbfc66d172c4a0d1528b6f662facd6c028ccfbe482c0312176810.png
+//cdn.devdocs.io/assets/docs-586f2fcc7f9dc375411881118536109df47276b68e246ce0c80877fd12ca135c.js
+/docs/css/index.json?1454792242
+/docs/dom/index.json?1454794824
+/docs/dom_events/index.json?1454792596
+/docs/html/index.json?1454792170
+/docs/http/index.json?1426424872
+/docs/javascript/index.json?1454792102
+
+NETWORK:
+/s/
+*
+
+FALLBACK:
+/ /
