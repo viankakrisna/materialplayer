@@ -25,7 +25,7 @@ table h4{
 }
 
 .mdl-layout__tab-panel.is-active {
-    animation: slideIn 250ms;
+    animation: fadeIn 250ms;
 }
 
 #contextmenu li {
@@ -288,7 +288,6 @@ dialog[open] {
         transform: scale(0);
     }
     100% {
-        opacity: 1;
         transform: scale(1);
     }
 }
@@ -298,7 +297,6 @@ dialog[open] {
         transform: translateY(-100%);
     }
     100% {
-        opacity: 1;
         transform: translateY(0);
     }
 }
@@ -308,7 +306,14 @@ dialog[open] {
         transform: rotate(0deg);
     }
     100% {
-        opacity: 1;
         transform: rotate(360deg);
+    }
+}
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
     }
 }
