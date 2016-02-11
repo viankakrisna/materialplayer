@@ -58,7 +58,7 @@ MP.player = (function ($) {
             shuffle();
         } else {
             $('.track.active')
-                .previous()
+                .prev()
                 .click();
         }
     }
