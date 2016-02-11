@@ -1,3 +1,6 @@
+body{
+    /*display: none*/
+}
 #wrapper {
     opacity: 0;
 }
@@ -240,6 +243,7 @@ footer {
 #currenttrackwrapper {
     overflow-x: scroll;
     overflow-y: hidden;
+    height: 1.5em;
 }
 
 #currenttrackwrapper::-webkit-scrollbar {

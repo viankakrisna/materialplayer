@@ -7,39 +7,52 @@ MP.db = (function($) {
     var databaseSchema = MP.init.databaseSchema;
     var $searchinput = $('#fixed-header-drawer-exp');
     var $libraryview = $('#libraryview');
+    var $databasedeleted = $('#deletedatabase');
+    var tableOption = {
+        paging: false,
+        order: [
+            [1, "asc"],
+            [0, "asc"]
+        ],
+    };
+
     var db = new Dexie(databaseName);
 
+
+    $searchinput
+        .on('keyup', function(e) {
+            console.log('Spacebar events initialized.');
+            var value = $(this)
+                .val();
+            $libraryview
+                .DataTable()
+                .search($(this)
+                    .val())
+                .draw();
+        });
+
     function renderLibrary() {
-        console.log('Library rendered.');
-        var heading = false;
-        $libraryview
-            .DataTable()
-            .destroy();
-        $libraryview
-            .html(defaultTableContent);
+        var rows = [];
         db.songs.each(function(song) {
-                var dom = $(song.dom);
-                dom.attr('data-src', URL.createObjectURL(song.file));
-                dom.attr('data-id', song.id);
-                if (heading) {
-                    $libraryview
-                        .append(dom);
-                } else {
-                    $libraryview
-                        .html(MP.playlist.tableheading).append(dom);
-                    heading = true;
-                }
+                var src = URL.createObjectURL(song.file);
+                var dom = '<tr class="track" data-src="' + src + '" data-id="' + song.id + '"><td class="track-number">' + song.track + '</td><td class="track-artist">' + song.artist + '</td><td class="track-album">' + song.album + '</td><td class="track-title">' + song.title + '</td><td class="track-file"></td>/tr>';
+                rows.push(dom);
             })
             .then(function() {
-                $libraryview.DataTable({
-                    paging: false,
-                    order: [
-                        [1, "asc"],
-                        [0, "asc"]
-                    ],
-                });
+                if ($.fn.dataTable.isDataTable($libraryview)) {
+                    $libraryview.DataTable().destroy();
+                }
+                $libraryview.html(MP.playlist.tableheading);
+                if (rows.length) {
+                    $libraryview.append(rows.join(''));
+                    $libraryview.DataTable(tableOption);
+                    console.log('Library rendered.');
+                } else {
+                    console.log('No songs found.');
+                }
             })
             .catch(function(error) {
+                console.log('Fail to render library.');
                 console.log(error);
             });
     }
@@ -50,7 +63,20 @@ MP.db = (function($) {
         });
     db.open();
     db.transaction("rw", db.songs, function() {
-            renderLibrary();
+            $window.onload = renderLibrary;
+            $databasedeleted
+                .on('click', function() {
+                    var yes = confirm('Are you sure? A deleted database contains cached files and it could not be restored.');
+                    if (yes) {
+                        db.songs.clear().then(function() {
+                            $window.trigger('mp:databasedeleted');
+                            console.log('Database deleted!');
+                            alert('Database deleted!');
+                        }).catch(function(e) {
+                            console.log(e);
+                        });
+                    }
+                });
             $window.on('mp:metadataready', function(event, dom, tags, file) {
                 console.log('Metadata is ready, adding file to database.', [arguments]);
                 db.songs.add({
@@ -70,19 +96,8 @@ MP.db = (function($) {
                         console.log(e);
                     });
             });
-            $searchinput
-                .on('keyup', function(e) {
-                    console.log('Spacebar events initialized.');
-                    var value = $(this)
-                        .val();
-                    $libraryview
-                        .DataTable()
-                        .search($(this)
-                            .val())
-                        .draw();
-                });
-
             $window.on('mp:databaseinserted', renderLibrary);
+            $window.on('mp:databasedeleted', renderLibrary);
         })
         .catch(function(error) {
             console.error(error);
