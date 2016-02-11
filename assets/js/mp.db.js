@@ -42,12 +42,13 @@ MP.db = (function($) {
                 if ($.fn.dataTable.isDataTable($libraryview)) {
                     $libraryview.DataTable().destroy();
                 }
-                $libraryview.html(MP.playlist.tableheading);
                 if (rows.length) {
+                    $libraryview.html(MP.playlist.tableheading);
                     $libraryview.append(rows.join(''));
                     $libraryview.DataTable(tableOption);
                     console.log('Library rendered.');
                 } else {
+                    $libraryview.html('<tr class="open-dialog" href="#open"><td colspan="5"><h4>Your library is empty.</h4></td></tr>');
                     console.log('No songs found.');
                 }
             })
@@ -63,7 +64,7 @@ MP.db = (function($) {
         });
     db.open();
     db.transaction("rw", db.songs, function() {
-            $window.onload = renderLibrary;
+            renderLibrary();
             $databasedeleted
                 .on('click', function() {
                     var yes = confirm('Are you sure? A deleted database contains cached files and it could not be restored.');

@@ -4,7 +4,11 @@ body{
 #wrapper {
     opacity: 0;
 }
-
+table h4{
+    text-align: center;
+    line-height: calc(100vh - 258px);
+    margin: 0;
+}
 .dataTables_filter {
     display: none;
 }
@@ -266,7 +270,7 @@ dialog[open] {
 }
 
 .page-content {
-    min-height: 100vh;
+    min-height: calc(100vh - 228px);
     overflow-x: scroll;
 }
 
