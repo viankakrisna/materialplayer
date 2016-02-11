@@ -35,7 +35,8 @@ MP.db = (function($) {
         var rows = [];
         db.songs.each(function(song) {
                 var src = URL.createObjectURL(song.file);
-                var dom = '<tr class="track" data-src="' + src + '" data-id="' + song.id + '"><td class="track-number">' + $(file.dom).find('track-number').text() + '</td><td class="track-artist">' + song.artist + '</td><td class="track-album">' + song.album + '</td><td class="track-title">' + song.title + '</td><td class="track-file"></td>/tr>';
+                var number = $(song.dom).find('.track-number').text();
+                var dom = '<tr class="track" data-src="' + src + '" data-id="' + song.id + '"><td class="track-number">' + number + '</td><td class="track-artist">' + song.artist + '</td><td class="track-album">' + song.album + '</td><td class="track-title">' + song.title + '</td><td class="track-file"></td>/tr>';
                 rows.push(dom);
             })
             .then(function() {
