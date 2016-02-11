@@ -10,9 +10,6 @@ MP.init = (function($) {
     function preventDefault(e) {
         e.preventDefault();
     }
-    setTimeout(function(){
-        $window.trigger('load');
-    }, 1000);
 
     function init() {
         $wrapper.css('opacity', 1);
