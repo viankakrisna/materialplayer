@@ -85,7 +85,12 @@ MP.player = (function ($) {
                     currentTrack.push($info.text());
                 }
             });
-        $currenttrack.html(currentTrack.join(' - '));
+            currenttrack = currentTrack.join(' - ');
+            console.log(currenttrack);
+        if (!currenttrack.length){
+            currenttrack = $activeTrack.find('.track-file').text();
+        }
+        $currenttrack.html(currenttrack);
         $('[href="#nowplaying"]')
             .find('span')
             .click();
