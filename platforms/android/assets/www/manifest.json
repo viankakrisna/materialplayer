@@ -1,0 +1,34 @@
+{
+    "name": "Material Player",
+    "version": "1",
+    "description": "Material designed multimedia player",
+    "manifest_version": 2,
+    "app": {
+        "background": {
+            "scripts": ["background.js"]
+        }
+    },
+    "externally_connectable": {
+        "matches": ["*://*.google.com/*"]
+    },
+    "file_handlers": {
+        "qo_documents": {
+            "extensions": ["mp3", "m4a", "aac", "wav", "flac"]
+        }
+    },
+    "webview": {
+        "partitions": [{
+            "name": "static",
+            "accessible_resources": ["sandbox.html", "sandbox.js", "assets/js/filepicker.js"]
+        }]
+    },
+    "icons": {
+        "36": "icon.png"
+    },
+    "permissions": ["webview","clipboardRead", "clipboardWrite", "*://*.google.com/*", "fileSystem", "fileSystem.write", "https://www.google-analytics.com/", "https://www.googleapis.com/", "identity", "storage", "unlimitedStorage"],
+    "oauth2": {
+        "client_id": "1868175267-d8imsu875ffa3csl8nebgkin5gi035d2.apps.googleusercontent.com",
+        "scopes": ["https://www.googleapis.com/auth/plus.login", "https://www.googleapis.com/auth/drive", "email", "profile"]
+    }
+}
+

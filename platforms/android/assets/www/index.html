@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="theme-color" content="#2196F3">
+        <meta charset="UTF-8">
+        <title>Material Player</title>
+        <link rel="icon" type="image/png" href="icon.png">
+        <link rel="stylesheet" href="assets/css/icon.css">
+        <link id="theme-link" rel="stylesheet" href="assets/css/material.blue-pink.min.css" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link id="font-link" rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto' type='text/css'>
+        <link rel="stylesheet" href="assets/css/style.css">
+        <link rel="stylesheet" href="assets/css/dialog-polyfill.css">
+        <link rel="stylesheet" href="assets/css/visualizer.css">
+        <link rel="stylesheet" href="assets/css/animate.min.css">
+        <style id="current-font"></style>
+    </head>
+
+    <body id="wrapper">
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+            <header class="mdl-layout__header">
+                <div class="mdl-layout__header-row">
+                    <!-- Material Player -->
+                    <span class="mdl-layout-title">Material Player</span>
+                    <div class="mdl-layout-spacer"></div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+                  mdl-textfield--floating-label mdl-textfield--align-right">
+                        <label class="mdl-button mdl-js-button mdl-button--icon" for="fixed-header-drawer-exp">
+                            <i class="material-icons">search</i>
+                        </label>
+                        <div class="mdl-textfield__expandable-holder">
+                            <input class="mdl-textfield__input" type="text" name="sample" id="fixed-header-drawer-exp">
+                        </div>
+                    </div>
+                </div>
+                <!-- Tabs -->
+                <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+                    <a href="#playlist" class="mdl-layout__tab is-active">Playlist</a>
+                    <a href="#visualizer" class="mdl-layout__tab visualizer-element">Visualizer</a>
+                    <a href="#library" class="mdl-layout__tab">Library</a>
+                    <a href="#nowplaying" class="mdl-layout__tab">Now Playing</a>
+                </div>
+            </header>
+            <main class="mdl-layout__content">
+                <section class="mdl-layout__tab-panel is-active" id="playlist">
+                    <div class="page-content">
+                        <table id="playlist-view" class="mdl-data-table mdl-shadow--2dp">
+                            <tr>
+                                <td>
+                                    <h4 class="open-dialog" href="#open">Drop files here to play!</h4>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+                <section class="mdl-layout__tab-panel" id="library">
+                    <div class="page-content">
+                        <table id="libraryview" class="mdl-data-table mdl-shadow--2dp">
+                            <thead>
+                                <th></th>
+                            </thead>
+                            <tbody>
+                                <td></td>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <section class="mdl-layout__tab-panel" id="visualizer">
+                    <div class="page-content">
+                    </div>
+                </section>
+                <section class="mdl-layout__tab-panel" id="nowplaying">
+                    <div class="page-content">
+                        <video id="player" preload>
+                        </video>
+                    </div>
+                </section>
+                <section class="mdl-layout__tab-panel" id="about">
+                    <div class="page-content">
+                    </div>
+                </section>
+            </main>
+            <div class="mdl-layout__drawer">
+                <span class="mdl-layout-title">Material Player</span>
+                <nav class="mdl-navigation">
+                    <a class="mdl-navigation__link open-dialog" href="#open">Open</a>
+                    <dialog id="open" class="mdl-dialog">
+                        <div class="mdl-dialog__content">
+                            <p>
+                                Where do you want to play your music from?
+                            </p>
+                        </div>
+                        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+                            <button id="local" type="button" class="mdl-button close">Local</button>
+                            <button id="login" type="button" class="mdl-button close" disabled>Google Drive</button>
+                            <button id="dropbox" type="button" class="mdl-button close" disabled>Dropbox</button>
+                            <button type="button" class="mdl-button close">Cancel</button>
+                        </div>
+                    </dialog>
+                    <a class="mdl-navigation__link open-dialog" href="#customizer">Customize</a>
+                    <dialog id="customizer" class="mdl-dialog">
+                        <div class="mdl-dialog__content">
+                            <p>
+                                Choose your font and theme here
+                            </p>
+                            <h6 for="theme">Theme</h6>
+                            <select name="theme" id="theme">
+                                <option>amber-blue</option>
+                                <option>amber-cyan</option>
+                                <option>amber-deep_orange</option>
+                                <option>amber-deep_purple</option>
+                                <option>amber-green</option>
+                                <option>amber-indigo</option>
+                                <option>amber-light_blue</option>
+                                <option>amber-light_green</option>
+                                <option>amber-lime</option>
+                                <option>amber-orange</option>
+                                <option>amber-pink</option>
+                                <option>amber-purple</option>
+                                <option>amber-red</option>
+                                <option>amber-teal</option>
+                                <option>amber-yellow</option>
+                                <option>blue_grey-amber</option>
+                                <option>blue_grey-blue</option>
+                                <option>blue_grey-cyan</option>
+                                <option>blue_grey-deep_orange</option>
+                                <option>blue_grey-deep_purple</option>
+                                <option>blue_grey-green</option>
+                                <option>blue_grey-indigo</option>
+                                <option>blue_grey-light_blue</option>
+                                <option>blue_grey-light_green</option>
+                                <option>blue_grey-lime</option>
+                                <option>blue_grey-orange</option>
+                                <option>blue_grey-pink</option>
+                                <option>blue_grey-purple</option>
+                                <option>blue_grey-red</option>
+                                <option>blue_grey-teal</option>
+                                <option>blue_grey-yellow</option>
+                                <option>blue-amber</option>
+                                <option>blue-cyan</option>
+                                <option>blue-deep_orange</option>
+                                <option>blue-deep_purple</option>
+                                <option>blue-green</option>
+                                <option>blue-indigo</option>
+                                <option>blue-light_blue</option>
+                                <option>blue-light_green</option>
+                                <option>blue-lime</option>
+                                <option>blue-orange</option>
+                                <option>blue-pink</option>
+                                <option>blue-purple</option>
+                                <option>blue-red</option>
+                                <option>blue-teal</option>
+                                <option>blue-yellow</option>
+                                <option>brown-amber</option>
+                                <option>brown-blue</option>
+                                <option>brown-cyan</option>
+                                <option>brown-deep_orange</option>
+                                <option>brown-deep_purple</option>
+                                <option>brown-green</option>
+                                <option>brown-indigo</option>
+                                <option>brown-light_blue</option>
+                                <option>brown-light_green</option>
+                                <option>brown-lime</option>
+                                <option>brown-orange</option>
+                                <option>brown-pink</option>
+                                <option>brown-purple</option>
+                                <option>brown-red</option>
+                                <option>brown-teal</option>
+                                <option>brown-yellow</option>
+                                <option>cyan-amber</option>
+                                <option>cyan-blue</option>
+                                <option>cyan-deep_orange</option>
+                                <option>cyan-deep_purple</option>
+                                <option>cyan-green</option>
+                                <option>cyan-indigo</option>
+                                <option>cyan-light_blue</option>
+                                <option>cyan-light_green</option>
+                                <option>cyan-lime</option>
+                                <option>cyan-orange</option>
+                                <option>cyan-pink</option>
+                                <option>cyan-purple</option>
+                                <option>cyan-red</option>
+                                <option>cyan-teal</option>
+                                <option>cyan-yellow</option>
+                                <option>deep_orange-amber</option>
+                                <option>deep_orange-blue</option>
+                                <option>deep_orange-cyan</option>
+                                <option>deep_orange-deep_purple</option>
+                                <option>deep_orange-green</option>
+                                <option>deep_orange-indigo</option>
+                                <option>deep_orange-light_blue</option>
+                                <option>deep_orange-light_green</option>
+                                <option>deep_orange-lime</option>
+                                <option>deep_orange-orange</option>
+                                <option>deep_orange-pink</option>
+                                <option>deep_orange-purple</option>
+                                <option>deep_orange-red</option>
+                                <option>deep_orange-teal</option>
+                                <option>deep_orange-yellow</option>
+                                <option>deep_purple-amber</option>
+                                <option>deep_purple-blue</option>
+                                <option>deep_purple-cyan</option>
+                                <option>deep_purple-deep_orange</option>
+                                <option>deep_purple-green</option>
+                                <option>deep_purple-indigo</option>
+                                <option>deep_purple-light_blue</option>
+                                <option>deep_purple-light_green</option>
+                                <option>deep_purple-lime</option>
+                                <option>deep_purple-orange</option>
+                                <option>deep_purple-pink</option>
+                                <option>deep_purple-purple</option>
+                                <option>deep_purple-red</option>
+                                <option>deep_purple-teal</option>
+                                <option>deep_purple-yellow</option>
+                                <option>green-amber</option>
+                                <option>green-blue</option>
+                                <option>green-cyan</option>
+                                <option>green-deep_orange</option>
+                                <option>green-deep_purple</option>
+                                <option>green-indigo</option>
+                                <option>green-light_blue</option>
+                                <option>green-light_green</option>
+                                <option>green-lime</option>
+                                <option>green-orange</option>
+                                <option>green-pink</option>
+                                <option>green-purple</option>
+                                <option>green-red</option>
+                                <option>green-teal</option>
+                                <option>green-yellow</option>
+                                <option>grey-amber</option>
+                                <option>grey-blue</option>
+                                <option>grey-cyan</option>
+                                <option>grey-deep_orange</option>
+                                <option>grey-deep_purple</option>
+                                <option>grey-green</option>
+                                <option>grey-indigo</option>
+                                <option>grey-light_blue</option>
+                                <option>grey-light_green</option>
+                                <option>grey-lime</option>
+                                <option>grey-orange</option>
+                                <option>grey-pink</option>
+                                <option>grey-purple</option>
+                                <option>grey-red</option>
+                                <option>grey-teal</option>
+                                <option>grey-yellow</option>
+                                <option>indigo-amber</option>
+                                <option>indigo-blue</option>
+                                <option>indigo-cyan</option>
+                                <option>indigo-deep_orange</option>
+                                <option>indigo-deep_purple</option>
+                                <option>indigo-green</option>
+                                <option>indigo-light_blue</option>
+                                <option>indigo-light_green</option>
+                                <option>indigo-lime</option>
+                                <option>indigo-orange</option>
+                                <option>indigo-pink</option>
+                                <option>indigo-purple</option>
+                                <option>indigo-red</option>
+                                <option>indigo-teal</option>
+                                <option>indigo-yellow</option>
+                                <option>light_blue-amber</option>
+                                <option>light_blue-blue</option>
+                                <option>light_blue-cyan</option>
+                                <option>light_blue-deep_orange</option>
+                                <option>light_blue-deep_purple</option>
+                                <option>light_blue-green</option>
+                                <option>light_blue-indigo</option>
+                                <option>light_blue-light_green</option>
+                                <option>light_blue-lime</option>
+                                <option>light_blue-orange</option>
+                                <option>light_blue-pink</option>
+                                <option>light_blue-purple</option>
+                                <option>light_blue-red</option>
+                                <option>light_blue-teal</option>
+                                <option>light_blue-yellow</option>
+                                <option>light_green-amber</option>
+                                <option>light_green-blue</option>
+                                <option>light_green-cyan</option>
+                                <option>light_green-deep_orange</option>
+                                <option>light_green-deep_purple</option>
+                                <option>light_green-green</option>
+                                <option>light_green-indigo</option>
+                                <option>light_green-light_blue</option>
+                                <option>light_green-lime</option>
+                                <option>light_green-orange</option>
+                                <option>light_green-pink</option>
+                                <option>light_green-purple</option>
+                                <option>light_green-red</option>
+                                <option>light_green-teal</option>
+                                <option>light_green-yellow</option>
+                                <option>lime-amber</option>
+                                <option>lime-blue</option>
+                                <option>lime-cyan</option>
+                                <option>lime-deep_orange</option>
+                                <option>lime-deep_purple</option>
+                                <option>lime-green</option>
+                                <option>lime-indigo</option>
+                                <option>lime-light_blue</option>
+                                <option>lime-light_green</option>
+                                <option>lime-orange</option>
+                                <option>lime-pink</option>
+                                <option>lime-purple</option>
+                                <option>lime-red</option>
+                                <option>lime-teal</option>
+                                <option>lime-yellow</option>
+                                <option>orange-amber</option>
+                                <option>orange-blue</option>
+                                <option>orange-cyan</option>
+                                <option>orange-deep_orange</option>
+                                <option>orange-deep_purple</option>
+                                <option>orange-green</option>
+                                <option>orange-indigo</option>
+                                <option>orange-light_blue</option>
+                                <option>orange-light_green</option>
+                                <option>orange-lime</option>
+                                <option>orange-pink</option>
+                                <option>orange-purple</option>
+                                <option>orange-red</option>
+                                <option>orange-teal</option>
+                                <option>orange-yellow</option>
+                                <option>pink-amber</option>
+                                <option>pink-blue</option>
+                                <option>pink-cyan</option>
+                                <option>pink-deep_orange</option>
+                                <option>pink-deep_purple</option>
+                                <option>pink-green</option>
+                                <option>pink-indigo</option>
+                                <option>pink-light_blue</option>
+                                <option>pink-light_green</option>
+                                <option>pink-lime</option>
+                                <option>pink-orange</option>
+                                <option>pink-purple</option>
+                                <option>pink-red</option>
+                                <option>pink-teal</option>
+                                <option>pink-yellow</option>
+                                <option>purple-amber</option>
+                                <option>purple-blue</option>
+                                <option>purple-cyan</option>
+                                <option>purple-deep_orange</option>
+                                <option>purple-deep_purple</option>
+                                <option>purple-green</option>
+                                <option>purple-indigo</option>
+                                <option>purple-light_blue</option>
+                                <option>purple-light_green</option>
+                                <option>purple-lime</option>
+                                <option>purple-orange</option>
+                                <option>purple-pink</option>
+                                <option>purple-red</option>
+                                <option>purple-teal</option>
+                                <option>purple-yellow</option>
+                                <option>red-amber</option>
+                                <option>red-blue</option>
+                                <option>red-cyan</option>
+                                <option>red-deep_orange</option>
+                                <option>red-deep_purple</option>
+                                <option>red-green</option>
+                                <option>red-indigo</option>
+                                <option>red-light_blue</option>
+                                <option>red-light_green</option>
+                                <option>red-lime</option>
+                                <option>red-orange</option>
+                                <option>red-pink</option>
+                                <option>red-purple</option>
+                                <option>red-teal</option>
+                                <option>red-yellow</option>
+                                <option>teal-amber</option>
+                                <option>teal-blue</option>
+                                <option>teal-cyan</option>
+                                <option>teal-deep_orange</option>
+                                <option>teal-deep_purple</option>
+                                <option>teal-green</option>
+                                <option>teal-indigo</option>
+                                <option>teal-light_blue</option>
+                                <option>teal-light_green</option>
+                                <option>teal-lime</option>
+                                <option>teal-orange</option>
+                                <option>teal-pink</option>
+                                <option>teal-purple</option>
+                                <option>teal-red</option>
+                                <option>teal-yellow</option>
+                                <option>yellow-amber</option>
+                                <option>yellow-blue</option>
+                                <option>yellow-cyan</option>
+                                <option>yellow-deep_orange</option>
+                                <option>yellow-deep_purple</option>
+                                <option>yellow-green</option>
+                                <option>yellow-indigo</option>
+                                <option>yellow-light_blue</option>
+                                <option>yellow-light_green</option>
+                                <option>yellow-lime</option>
+                                <option>yellow-orange</option>
+                                <option>yellow-pink</option>
+                                <option>yellow-purple</option>
+                                <option>yellow-red</option>
+                                <option>yellow-teal</option>
+                            </select>
+                            <h6 for="font">Font</h6>
+                            <input type="text" name="font" id="font" placeholder="ie: 'Roboto'">
+                        </div>
+                        <div class="mdl-dialog__actions mdl-dialog__actions">
+                            <button id="reset-style" type="button" class="mdl-button close">Reset</button>
+                            <button type="button" class="mdl-button close">OK</button>
+                        </div>
+                    </dialog>
+                    <!-- <a class="mdl-navigation__link open-dialog" href="#visualizer-dialog">Visualizer</a> -->
+                    <a class="mdl-navigation__link open-dialog" href="#settings-dialog">Settings</a>
+                    <dialog id="settings-dialog" class="mdl-dialog">
+                        <div class="mdl-dialog__content">
+                            <h5>
+                                Settings
+                            </h5>
+                            <h6 for="defaulttab">Default Tab</h6>
+                            <select name="defaulttab" id="defaulttab">
+                                <option value="#playlist">Playlist</option>
+                                <option value="#library">Library</option>
+                                <option value="#nowplaying">Now Playing</option>
+                            </select>
+                            <h6 for="deletedatabase">Delete Database</h6>
+                            <button id="deletedatabase" type="button" class="mdl-button">Delete!</button>
+                        </div>
+                        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+                            <button type="button" class="mdl-button close">Ok</button>
+                        </div>
+                    </dialog>
+                    <a class="mdl-navigation__link" href="http://github.com/viankakrisna/materialplayer" target="__blank">About</a>
+                    <dialog id="visualizer-dialog" class="mdl-dialog">
+                        <div class="mdl-dialog__content">
+                            <p>
+                                It's still in beta, do you want to enable it? It's performance heavy!
+                            </p>
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-1">
+                                <input type="checkbox" id="visualizer-switch" class="mdl-switch__input">
+                                <span class="mdl-switch__label"></span>
+                            </label>
+                        </div>
+                        <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+                            <button type="button" class="mdl-button close">Ok</button>
+                        </div>
+                    </dialog>
+                </nav>
+            </div>
+            <!-- <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000"> -->
+            <div>
+                <input type="file" id="fileselect" name="fileselect[]" multiple="multiple" accept="audio/*,video/*">
+            </div>
+            <footer id="footer" class="paused">
+                <button href="#open" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored open-dialog">
+                    <i class="material-icons">add</i>
+                </button>
+                <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
+                <div class="mdl-grid">
+                    <div class="mdl-cell mdl-cell--12-col">
+                        <div id="info">
+                            <div id="currenttrackwrapper">
+                                <em id="currenttrack">No media.</em>
+                            </div>
+                            <div id="time">(00:00 / 00:00)</div>
+                        </div>
+                        <input id="slider" class="mdl-slider mdl-js-slider" type="range" min="0" max="1000" value="0" tabindex="0">
+                        <a id="shuffle" class="material-icons">shuffle</a>
+                        <a id="previous" class="material-icons">skip_previous</a>
+                        <a id="play" class="material-icons">play_arrow</a>
+                        <a id="pause" class="material-icons">pause</a>
+                        <a id="next" class="material-icons">skip_next</a>
+                        <a id="loop" class="material-icons">loop</a>
+                        <!-- <a id="mute" class="material-icons">mute</a> -->
+                        <div id="status">
+                        </div>
+                    </div>
+                </div>
+                <div id="log"></div>
+            </footer>
+            <div id="subtitle" class="srt" data-video="player" data-srt=""></div>
+            <div id="contextmenu">
+                <ul>
+                    <li id="play-track">Play</li>
+                    <li id="download-track">Download</li>
+                    <li id="reload-track">Reload</li>
+                    <li id="delete-track">Delete</li>
+                </ul>
+            </div>
+        </div>
+        <dialog id="gapimodal" class="mdl-dialog">
+            <div class="mdl-dialog__content">
+            </div>
+            <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+                <button type="button" class="mdl-button close">Ok</button>
+            </div>
+        </dialog>
+        <div id="gapidiv">
+            <webview id="gapiframe" src="sandbox.html" partition="persist:static"></webview>
+        </div>
+        <script src="https://www.google.com/jsapi?key=AIzaSyCtkghKt38OyadfYdhm3Ybubq2JVFl-QAo"></script>
+        <script src="https://apis.google.com/js/client.js"></script>
+        <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="1h54ipc0xt6l0os"></script>
+        <script src="assets/js/dialog-polyfill.js"></script>
+        <script src="assets/js/Dexie.min.js"></script>
+        <script src="assets/js/material.min.js"></script>
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/jquery.dataTables.min.js"></script>
+        <script src="assets/js/jquery.srt.js"></script>
+        <script src="assets/js/id3-minimized.js"></script>
+        <script src="assets/js/filepicker.js"></script>
+        <script src="assets/js/mp.init.js"></script>
+        <script src="assets/js/mp.db.js"></script>
+        <script src="assets/js/mp.player.js"></script>
+        <script src="assets/js/mp.storage.js"></script>
+        <script src="assets/js/mp.settings.js"></script>
+        <script src="assets/js/mp.playlist.js"></script>
+        <script src="assets/js/mp.contextmenu.js"></script>
+        <script src="assets/js/mp.hash.js"></script>
+        <script src="assets/js/mp.customizer.js"></script>
+        <script src="assets/js/mp.dialog.js"></script>
+        <script src="assets/js/mp.drive.js"></script>
+        <script src="assets/js/mp.dropbox.js"></script>
+        <script src="assets/js/mp.artwork.js"></script>
+        <script src="assets/js/mp.log.js"></script>
+        <!--<script src="assets/js/mp.visualizer.js"></script>-->
+        <script src="assets/js/mp.contextmenu.js"></script>
+    </body>
+
+</html>

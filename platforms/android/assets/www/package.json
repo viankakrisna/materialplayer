@@ -1,0 +1,22 @@
+{
+  "name": "material-player",
+  "version": "1.0.0",
+  "description": "Music player for browser. Material designed.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viankakrisna/Material-Music-Player.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/viankakrisna/Material-Music-Player/issues"
+  },
+  "homepage": "https://github.com/viankakrisna/Material-Music-Player#readme",
+  "devDependencies": {
+    "gulp-concat": "^2.6.0"
+  }
+}
