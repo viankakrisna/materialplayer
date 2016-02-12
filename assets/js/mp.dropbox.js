@@ -14,6 +14,7 @@
     $window.on('load', initDropbox);
 
     function initDropbox() {
+        console.log('Initializing Dropbox integration');
         var options = {
             success: function(files) {
                 files.forEach(parseDropbox);

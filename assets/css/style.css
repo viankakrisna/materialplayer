@@ -15,6 +15,11 @@ table h4 {
 .dataTables_filter {
     display: none;
 }
+#previous:active,
+#next:active {
+    animation: zoomIn 250ms;
+    outline: nonel
+}
 
 #contextmenu {
     display: none;
