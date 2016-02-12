@@ -9,9 +9,11 @@
     var tableheading = "<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th><th>File</th></tr>";
     var $fileselect = $('#fileselect');
     var $wrapper = $('#wrapper');
-    window.onload = initPicker;
+    var $window = $(window);
+    $window.on('load', initPicker);
 
     function initPicker() {
+        console.log('Initializing Google Drive integration');
         if (window.gapi && window.google && window.FilePicker) {
             var picker = new FilePicker({
                 apiKey: 'AIzaSyBMDM4v6cjmt3k00QO7PAZn2MGg8hRvSv4',
@@ -21,13 +23,13 @@
                     // console.log(fileList);
                     fileList = fileList.sort(sortby('name', 'ascending'));
                     fileList.forEach(parseGoogleDrive);
-                    console.log(playlist);
                     renderPlaylist($playlistview, playlist);
                     ids.forEach(getFileUrl);
                 }
             });
+            console.log('Google Drive integration enabled.');
         } else {
-            console.log('Google Drive integration could not start.');
+            console.log('Google Drive integration disabled.');
         }
     }
 
@@ -45,43 +47,31 @@
             var accessToken = gapi.auth.getToken()
                 .access_token;
             var xhr = new XMLHttpRequest();
+            xhr.responseType = "blob";
+            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xhr.onload = function() {
+                var file = new File([xhr.response], 'blob');
+                var url = URL.createObjectURL(file);
+                var $track = $($playlistview.find('tr')[index + 1]);
+                var oldSrc = $track.data('src');
+                $track.data('src', url);
+                $track.attr('data-src', url);
+                $track.attr('data-link', oldSrc);
+                readTags(file, index);
+            };
             if (fromLink) {
                 xhr.open('GET', $track.data('src'));
-                xhr.responseType = "blob";
-                xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-                xhr.onload = function() {
-                    var file = new File([xhr.response], 'blob');
-                    var url = URL.createObjectURL(file);
-                    var $track = $($playlistview.find('tr')[index + 1]);
-                    var oldSrc = $track.data('src');
-                    $track.data('src', url);
-                    $track.attr('data-src', url);
-                    $track.attr('data-link', oldSrc);
-                    readTags(file, index);
-                };
                 xhr.onerror = function() {
                     downloadFile(fileObj, index, true);
                 };
-                xhr.send();
             } else {
                 xhr.open('GET', fileObj.downloadUrl);
-                xhr.responseType = "blob";
-                xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-                xhr.onload = function() {
-                    var file = new File([xhr.response], 'blob');
-                    var url = URL.createObjectURL(file);
-                    var $track = $($playlistview.find('tr')[index + 1]);
-                    var oldSrc = $track.data('src');
-                    $track.data('src', url);
-                    $track.attr('data-src', url);
-                    $track.attr('data-link', oldSrc);
-                    readTags(file, index);
-                };
                 xhr.onerror = function() {
                     downloadFile(fileObj, index, true);
                 };
-                xhr.send();
             }
+            xhr.send();
+            console.log('starting google drive download for file:', fileObj);
         }
     }
 
