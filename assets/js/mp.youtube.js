@@ -16,9 +16,8 @@ MP.youtube = (function($) {
         var request = gapi.client.youtube.search.list({
             q: q,
             type: 'video',
-            videoEmbeddable: true,
             part: 'snippet',
-            maxResult: 10
+            maxResults: 50
         });
         console.log('querying youtube for:', q);
 
