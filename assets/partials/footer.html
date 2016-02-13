@@ -1,0 +1,31 @@
+<footer id="footer" class="paused">
+    <button href="#open" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored open-dialog">
+        <i class="material-icons">add</i>
+    </button>
+    <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--12-col">
+            <div id="info">
+                <div id="currenttrackwrapper">
+                    <em id="currenttrack">No media.</em>
+                </div>
+                <div id="time">(00:00 / 00:00)</div>
+            </div>
+            <input id="slider" class="mdl-slider mdl-js-slider" type="range" min="0" max="1000" value="0" tabindex="0">
+            <a id="shuffle" class="material-icons">shuffle</a>
+            <a id="previous" class="material-icons">skip_previous</a>
+            <a id="play" class="material-icons">play_arrow</a>
+            <a id="pause" class="material-icons">pause</a>
+            <a id="next" class="material-icons">skip_next</a>
+            <a id="loop" class="material-icons">loop</a>
+            <!-- <a id="mute" class="material-icons">mute</a> -->
+            <div id="status">
+            </div>
+        </div>
+    </div>
+    <div id="log"></div>
+</footer>
+<input type="file" id="fileselect" name="fileselect[]" multiple="multiple" accept="audio/*,video/*">
+<script src="bundle.js" inline></script>
+</body>
+</html>
