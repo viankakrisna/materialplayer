@@ -34,21 +34,9 @@ MP.artwork = (function($) {
             url: query,
             contentType: 'application/xml',
             success: function(resp) {
-                var image = $(resp).find('image[size="mega"]').text();
-                var xhr = new XMLHttpRequest();
-                xhr.responseType = "blob";
-                xhr.onload = function() {
-                    console.log('Artwork successfully downloaded');
-                    var image = new File([xhr.response], 'blob');
-                    var blob = URL.createObjectURL(image);
-                    $(el).attr('data-artwork', blob);
-                    showArtwork();
-                };
-                xhr.open('GET', image);
-                xhr.onerror = function(e) {
-                    console.log('Failed to load image', e);
-                };
-                xhr.send();
+                var url = $(resp).find('image[size="mega"]').text();
+                el.attr('data-artwork', url);
+                showArtwork();
             }
         });
     }
@@ -58,6 +46,5 @@ MP.artwork = (function($) {
             .attr('data-artwork');
         $('#player')
             .attr('poster', src);
-        console.log('Artwork is placed');
     }
 }(jQuery));
