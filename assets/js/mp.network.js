@@ -1,7 +1,7 @@
 window.MP = window.MP || {};
 MP.network = (function($) {
     'use strict';
-    if (chrome && chrome.app && chrome.app.window) {
+    if (window.chrome && window.chrome.app && window.chrome.app.window) {
 
     } else {
         $('head').append([
