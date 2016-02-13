@@ -7,8 +7,8 @@ MP.youtube = (function($) {
     });
 
     function handleAPILoaded() {
-        $('#search-button').attr('disabled', false);
-        $('#search-button').on('click', search);
+        $('#query').attr('disabled', false);
+        $('#query').on('change', search);
     }
     // Search for a specified string.
     function search() {
