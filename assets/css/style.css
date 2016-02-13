@@ -15,6 +15,7 @@ table h4 {
 .dataTables_filter {
     display: none;
 }
+
 #previous:active,
 #next:active {
     animation: zoomIn 250ms;
@@ -147,12 +148,12 @@ footer {
 }
 
 #player {
-    margin: 104px auto 124px;
+    margin: 120px auto 140px;
     position: fixed;
     left: 0;
     right: 0;
     width: 100%;
-    height: calc(100vh - 228px);
+    height: calc(100vh - 260px);
     background: black;
     top: 0;
     bottom: 0;
@@ -297,12 +298,17 @@ dialog[open] {
     -ms-user-select: none;
     user-select: none;
 }
+
 .center-this {
     position: absolute;
     top: 50%;
     left: 0;
     right: 0;
     transform: translateY(-50%);
+}
+
+#buttons {
+    text-align: center;
 }
 
 @keyframes slideIn {

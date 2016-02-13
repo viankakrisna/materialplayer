@@ -24,6 +24,7 @@
         google.load('picker', '1', {
             callback: this._pickerApiLoaded.bind(this)
         });
+
     };
     FilePicker.prototype = {
         /**
@@ -98,9 +99,10 @@
         _doAuth: function(immediate, callback) {
             gapi.auth.authorize({
                 client_id: this.clientId + '-4sbpcq4qcjto2tl1ao2m6qpanc56c5af.apps.googleusercontent.com',
-                scope: 'https://www.googleapis.com/auth/drive',
+                scope: 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/youtube',
                 immediate: immediate
             }, callback);
         }
     };
+
 }());
