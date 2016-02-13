@@ -48,7 +48,6 @@
                 .access_token;
             var xhr = new XMLHttpRequest();
             xhr.responseType = "blob";
-            xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
             xhr.onload = function() {
                 var file = new File([xhr.response], 'blob');
                 var url = URL.createObjectURL(file);
@@ -61,11 +60,13 @@
             };
             if (fromLink) {
                 xhr.open('GET', $track.data('src'));
+                xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
                 xhr.onerror = function() {
                     downloadFile(fileObj, index, true);
                 };
             } else {
                 xhr.open('GET', fileObj.downloadUrl);
+                xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
                 xhr.onerror = function() {
                     downloadFile(fileObj, index, true);
                 };
