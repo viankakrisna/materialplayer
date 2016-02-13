@@ -37,24 +37,22 @@ MP.storage = (function() {
      */
     var storage = (function() {
         var obj = {};
-        switch (true) {
-            case (window.chrome && window.chrome.storage):
-                obj = window.chrome.storage.local;
-                break;
-            default:
-                obj = {
-                    get: function(key, callback) {
-                        var result = {};
-                        result[key] = localStorage.getItem(key);
-                        callback(result);
-                    },
-                    set: function(obj) {
-                        Object.keys(obj)
-                            .forEach(function(key) {
-                                localStorage.setItem(key, obj[key]);
-                            });
-                    }
-                };
+        if (window.chrome && window.chrome.storage) {
+            obj = window.chrome.storage.local;
+        } else {
+            obj = {
+                get: function(key, callback) {
+                    var result = {};
+                    result[key] = localStorage.getItem(key);
+                    callback(result);
+                },
+                set: function(obj) {
+                    Object.keys(obj)
+                        .forEach(function(key) {
+                            localStorage.setItem(key, obj[key]);
+                        });
+                }
+            };
         }
         return obj;
     }());

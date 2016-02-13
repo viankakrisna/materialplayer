@@ -1,4 +1,5 @@
-(function($) {
+window.MP = window.MP || {};
+MP.dropbox = (function($) {
     var sortby = MP.playlist.sortby;
     var renderPlaylist = MP.playlist.renderPlaylist;
     var readTags = MP.playlist.readTags;
@@ -71,4 +72,6 @@
         var row = ['<tr class="track" data-src="' + file.link + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + file.name + '</td></tr>'].join('');
         playlist.push(row);
     }
+
+    return initDropbox;
 }(jQuery));
