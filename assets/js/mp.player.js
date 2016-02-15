@@ -1,10 +1,11 @@
 window.MP = window.MP || {};
-MP.player = (function ($) {
+MP.player = (function($) {
     /*
         Player View
      */
     var $window = $(window);
     var $playerwrapper = $('footer');
+    var $playlistview = $('#playlist-view');
     var $player = $('#player');
     var $subtitle = $('#subtitle');
     var $slider = $('#slider');
@@ -79,15 +80,15 @@ MP.player = (function ($) {
         $playerwrapper.removeClass('paused');
         $playerwrapper.addClass('played');
         $activeTrack.find('td')
-            .each(function (index, info) {
+            .each(function(index, info) {
                 var $info = $(info);
                 if (index && $info.text() && index !== 4) {
                     currentTrack.push($info.text());
                 }
             });
-            currenttrack = currentTrack.join(' - ');
-            console.log(currenttrack);
-        if (!currenttrack.length){
+        currenttrack = currentTrack.join(' - ');
+        console.log(currenttrack);
+        if (!currenttrack.length) {
             currenttrack = $activeTrack.find('.track-file').text();
         }
         $currenttrack.html(currenttrack);
@@ -169,13 +170,14 @@ MP.player = (function ($) {
     }
 
     function playFirstSong() {
-        $('.track')
+        $playlistview
+            .find('.track')
             .first()
             .click();
     }
+
     $window.on('load', setupPlayerEvents);
     return {
         play: play
     };
 }(jQuery));
-
