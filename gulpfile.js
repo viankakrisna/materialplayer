@@ -24,6 +24,7 @@ gulp.task('scripts', function() {
             'assets/js/jquery.srt.js',
             'assets/js/id3-minimized.js',
             'assets/js/filepicker.js',
+            'assets/js/d3.v3.min.js',
             'assets/js/mp.network.js',
             'assets/js/mp.init.js',
             'assets/js/mp.db.js',
@@ -41,6 +42,7 @@ gulp.task('scripts', function() {
             'assets/js/mp.artwork.js',
             'assets/js/mp.log.js',
             'assets/js/mp.contextmenu.js',
+            'assets/js/mp.visualizer.js',
         ])
         .pipe(sourcemaps.init({
             loadMaps: true

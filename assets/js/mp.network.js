@@ -1,9 +1,9 @@
 window.MP = window.MP || {};
 MP.network = (function($) {
     'use strict';
-    if (window.chrome && window.chrome.app && window.chrome.app.window) {
+    // if (window.chrome && window.chrome.app && window.chrome.app.window) {
 
-    } else {
+    // } else {
         $('head').append([
             '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">',
         ]);
@@ -13,7 +13,7 @@ MP.network = (function($) {
             '<script src="https://apis.google.com/js/client.js"></script>',
             '<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="1h54ipc0xt6l0os"></script>'
         ].join(''));
-    }
+    // }
     var network = {
         init: {
 

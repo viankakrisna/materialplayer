@@ -311,6 +311,15 @@ dialog[open] {
     text-align: center;
 }
 
+@media (min-width: 1025px) {
+    table h4 {
+        line-height: calc(100vh - 262px);
+    }
+    .page-content {
+        min-height: calc(100vh - 236px);
+    }
+}
+
 @keyframes slideIn {
     0% {
         transform: translateY(-100%);
