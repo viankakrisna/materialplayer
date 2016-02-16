@@ -1,0 +1,27 @@
+CACHE MANIFEST
+
+#version 1.0 2-17-2016
+
+CACHE:
+
+#images
+
+
+#internal HTML documents
+http://localhost/materialplayer/
+
+#style sheets
+http://localhost/materialplayer/assets/css/material.blue-pink.min.css
+http://localhost/materialplayer/bundle.css
+https://fonts.googleapis.com/css?family=Roboto
+https://fonts.googleapis.com/icon?family=Material+Icons
+
+#javascript files
+https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.en.a_H8_1L9VPo.O/m=client/rt=j/sv=1/d=1/ed=1/am=AQ/rs=AGLTcCO6g8LzWY4Tnes3mZRHS682lN-HKQ/t=zcms/cb=gapi.loaded_0
+http://localhost/materialplayer/bundle.js
+https://www.google.com/jsapi?key=AIzaSyCtkghKt38OyadfYdhm3Ybubq2JVFl-QAo
+https://apis.google.com/js/client.js
+https://www.dropbox.com/static/api/2/dropins.js
+
+NETWORK:
+*

@@ -4,7 +4,7 @@
     "description": "Material designed multimedia player",
     "manifest_version": 2,
     "background": {
-        "scripts": ["background.js"]
+        "scripts": ["chrome/background.js"]
     },
     "externally_connectable": {
         "matches": ["*://*.google.com/*"]
@@ -17,7 +17,7 @@
     },
     "content_scripts": [{
         "matches": ["file://*.mp3"],
-        "js": ["open.js"]
+        "js": ["chrome/open.js"]
     }],
     "content_security_policy": "script-src 'self' https://*.google.com https://*.dropbox.com; object-src 'self'",
     "permissions": ["clipboardRead", "clipboardWrite", "<all_urls>", "identity", "storage", "unlimitedStorage", "tabs"],

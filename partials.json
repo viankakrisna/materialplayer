@@ -1,0 +1,12 @@
+[
+    "assets/partials/head.html",
+    "assets/partials/header.html",
+    "assets/partials/about.html",
+    "assets/partials/library.html",
+    "assets/partials/nowplaying.html",
+    "assets/partials/playlist.html",
+    "assets/partials/visualizer.html",
+    "assets/partials/youtube.html",
+    "assets/partials/hidden.html",
+    "assets/partials/footer.html"
+]
