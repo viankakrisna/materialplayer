@@ -4,6 +4,7 @@
     "assets/js/lib/material.min.js",
     "assets/js/lib/jquery.min.js",
     "assets/js/lib/jquery.dataTables.min.js",
+    "assets/js/lib/jquery.columns.min.js",
     "assets/js/lib/jquery.srt.js",
     "assets/js/lib/id3-minimized.js",
     "assets/js/lib/filepicker.js",

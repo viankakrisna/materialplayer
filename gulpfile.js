@@ -1,15 +1,15 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var fs = require('fs');
-// var uglify = require('gulp-uglify');
-// var minifycss = require('gulp-cssnano');
-// var inlinesource = require('gulp-inline-source');
-// var htmlmin = require('gulp-htmlmin');
-// var sass = require('gulp-ruby-sass');
+var uglify = require('gulp-uglify');
+var minifycss = require('gulp-cssnano');
+var inlinesource = require('gulp-inline-source');
+var htmlmin = require('gulp-htmlmin');
+var sass = require('gulp-ruby-sass');
 var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 // var browserSync = require('browser-sync')
-    // .create();
+// .create();
 var paths = {
     styles: ['assets/css/*.css'],
     scripts: ['assets/js/*.js'],
@@ -20,28 +20,32 @@ var styles = JSON.parse(fs.readFileSync('styles.json', 'utf8'));
 var partials = JSON.parse(fs.readFileSync('partials.json', 'utf8'));
 gulp.task('scripts', function() {
     return gulp.src(scripts)
-        // .pipe(sourcemaps.init({
-        //     loadMaps: true
-        // }))
-        // .on('error', swallowError)
+        .pipe(sourcemaps.init())
+        .on('error', swallowError)
+        .pipe(sourcemaps.write())
+        .pipe(sourcemaps.init())
         .pipe(concat('bundle.js'))
+        .pipe(sourcemaps.write())
+        // .pipe(sourcemaps.init())
         // .pipe(uglify())
         // .pipe(sourcemaps.write())
         .pipe(gulp.dest('.'))
 });
 gulp.task('styles', function() {
     return gulp.src(styles)
-        .pipe(sourcemaps.init({
-            loadMaps: true
-        }))
+        .pipe(sourcemaps.init())
         .pipe(concat('bundle.css'))
+        .pipe(sourcemaps.write())
+        .pipe(sourcemaps.init())
         .pipe(autoprefixer({
             browsers: ['last 10 versions'],
             cascade: false
         }))
         .on('error', swallowError)
-        // .pipe(minifycss())
         .pipe(sourcemaps.write())
+        // .pipe(sourcemaps.init())
+        // .pipe(minifycss())
+        // .pipe(sourcemaps.write())
         .pipe(gulp.dest('.'))
         // .pipe(browserSync.stream());
 });
