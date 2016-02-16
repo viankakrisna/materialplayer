@@ -51,7 +51,7 @@ MP.customizer = (function ($) {
         var theme = setting.theme !== 'null' ? setting.theme : 'indigo-blue';
         if (setting.theme) {
             $('#theme-link')
-                .attr('href', 'assets/css/material.' + theme + '.min.css');
+                .attr('href', 'assets/css/lib/material.' + theme + '.min.css');
             storage.set(setting);
             $('[name="theme-color"]')
                 .attr('content', colorToHex($('header')

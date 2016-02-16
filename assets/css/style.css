@@ -1,3 +1,6 @@
+* {
+    transition: 250ms;
+}
 body {
     /*display: none*/
 }
@@ -289,6 +292,27 @@ dialog[open] {
     min-height: calc(100vh - 228px);
     overflow-x: auto;
 }
+
+/*#log {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    height: 2em;
+    z-index: 999999;
+    color: white;
+    text-align: center;
+    opacity: 1;
+    line-height: 2em;
+    display: inline-block;
+    pointer-events: none;
+    width: auto;
+    opacity: 0;
+    animation: fadeOut 1s 1s;
+    background: black;
+}*/
 
 .track td {
     -webkit-touch-callout: none;

@@ -1,10 +1,11 @@
-if (window.gapi) {
     MP.youtube = (function($) {
         'use strict';
         var $window = $(window);
         // After the API loads, call a function to enable the search box.
         $window.on('load', function() {
-            gapi.client.load('youtube', 'v3', handleAPILoaded);
+            if (window.gapi) {
+                gapi.client.load('youtube', 'v3', handleAPILoaded);
+            }
         });
 
         function handleAPILoaded() {
@@ -56,4 +57,3 @@ if (window.gapi) {
 
         return Yt;
     }(jQuery));
-}
