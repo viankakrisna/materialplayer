@@ -14,11 +14,12 @@
     "assets/js/mp.db.js",
     "assets/js/mp.player.js",
     "assets/js/mp.storage.js",
+    "assets/js/mp.customizer.js",
     "assets/js/mp.settings.js",
     "assets/js/mp.playlist.js",
+    "assets/js/mp.chrome.js",
     "assets/js/mp.contextmenu.js",
     "assets/js/mp.hash.js",
-    "assets/js/mp.customizer.js",
     "assets/js/mp.dialog.js",
     "assets/js/mp.drive.js",
     "assets/js/mp.dropbox.js",
@@ -26,6 +27,5 @@
     "assets/js/mp.artwork.js",
     "assets/js/mp.log.js",
     "assets/js/mp.contextmenu.js",
-    "assets/js/mp.visualizer.js",
-    "assets/js/mp.chrome.js"
+    "assets/js/mp.visualizer.js"
 ]

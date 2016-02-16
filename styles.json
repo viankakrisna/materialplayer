@@ -1,6 +1,7 @@
 [
-    "assets/css/animate.min.css",
-    "assets/css/dialog-polyfill.css",
+    "assets/css/lib/animate.min.css",
+    "assets/css/lib/dialog-polyfill.css",
+    "assets/css/lib/icon.css",
     "assets/css/visualizer.css",
     "assets/css/style.css"
 ]

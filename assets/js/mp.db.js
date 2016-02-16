@@ -13,7 +13,9 @@ MP.db = (function($) {
 
     var db = new Dexie(databaseName);
 
-    $searchinput.on('keyup', function(e) {
+    $searchinput.on('keyup', searchLibrary);
+
+    function searchLibrary(e) {
         var value = $(this)
             .val();
         $libraryview
@@ -22,7 +24,7 @@ MP.db = (function($) {
                 .val())
             .draw();
         console.log('Spacebar events initialized.');
-    });
+    }
 
     function createRows(song) {
         var src = URL.createObjectURL(song.file);

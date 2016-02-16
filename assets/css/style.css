@@ -1,6 +1,7 @@
 * {
     transition: 250ms;
 }
+
 body {
     /*display: none*/
 }
@@ -292,6 +293,21 @@ dialog[open] {
     min-height: calc(100vh - 228px);
     overflow-x: auto;
 }
+
+h4.open-dialog {
+    transition: 250ms;
+}
+
+.drag h4.open-dialog {
+    border-radius: 50%;
+    background: teal;
+    color: white;
+    width: 50vw;
+    height: 50vw;
+    margin: auto;
+    line-height: 50vw;
+}
+
 
 /*#log {
     position: fixed;

@@ -7,6 +7,34 @@ MP.chrome = (function($) {
     var playlist = [];
     var list = [];
     var $window = $(window);
+    $window.on('load', init);
+
+    function init() {
+        if (window.chrome && window.chrome.storage) {
+            console.log('checking for open file');
+            chrome.storage.local.get('open', function(item) {
+                chrome.storage.local.set({ open: false }, function() {
+                    if (item.open) {
+                        list.push(item.open);
+                        list.forEach(parseLocalFile);
+                        console.log(list);
+                        console.log(playlist);
+                        renderPlaylist($playlistview, playlist);
+                        processFiles();
+
+                    }
+                });
+            });
+            chrome.runtime.onMessage.addListener(
+                function(request, sender, sendResponse) {
+                    list.push(request);
+                    list.forEach(parseLocalFile);
+                    renderPlaylist($playlistview, playlist);
+                    processFiles();
+
+                });
+        }
+    }
 
     function parseLocalFile(url, index) {
         if (!index) {
@@ -40,31 +68,8 @@ MP.chrome = (function($) {
             xhr.send();
         });
     }
-    $window.on('load', function() {
-        if (window.chrome && window.chrome.storage) {
-            console.log('checking for open file');
-            chrome.storage.local.get('open', function(item) {
-                chrome.storage.local.set({ open: false }, function() {
-                    if (item.open) {
-                        list.push(item.open);
-                        list.forEach(parseLocalFile);
-                        console.log(list);
-                        console.log(playlist);
-                        renderPlaylist($playlistview, playlist);
-                        processFiles();
-
-                    }
-                });
-            });
-            chrome.runtime.onMessage.addListener(
-                function(request, sender, sendResponse) {
-                    list.push(request);
-                    list.forEach(parseLocalFile);
-                    renderPlaylist($playlistview, playlist);
-                    processFiles();
-
-                });
-        }
-    });
+    return {
+        init: init
+    };
 
 }(jQuery));

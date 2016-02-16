@@ -1003,28 +1003,10 @@ MP.init = (function($) {
      */
     var $wrapper = $('#wrapper');
     var $window = $(window);
-
-    function preventDefault(e) {
-        e.preventDefault();
-    }
-
-    function init() {
-        $wrapper.css('opacity', 1);
-    }
-
-    function getBlob(url, callback) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.responseType = 'blob';
-        xhr.onload = function(e) {
-            var blob = window.URL.createObjectURL(this.response);
-            callback(blob);
-        };
-        xhr.send();
-    }
-    $window.on('load', init);
     return {
-        preventDefault: preventDefault,
+        preventDefault: function preventDefault(e) {
+            e.preventDefault();
+        },
         libraryview: $('#libraryview'),
         databaseName: 'MP',
         databaseSchema: 'id,artist,album,track,title,file,dom',
@@ -1062,7 +1044,9 @@ MP.db = (function($) {
 
     var db = new Dexie(databaseName);
 
-    $searchinput.on('keyup', function(e) {
+    $searchinput.on('keyup', searchLibrary);
+
+    function searchLibrary(e) {
         var value = $(this)
             .val();
         $libraryview
@@ -1071,7 +1055,7 @@ MP.db = (function($) {
                 .val())
             .draw();
         console.log('Spacebar events initialized.');
-    });
+    }
 
     function createRows(song) {
         var src = URL.createObjectURL(song.file);
@@ -1391,6 +1375,94 @@ MP.storage = (function() {
 }());
 
 window.MP = window.MP || {};
+MP.customizer = (function ($) {
+    /*
+        Customizer
+     */
+    var $window = $(window);
+    var $showCustomizerBtn = $('#show-customizer');
+    var $customizerModal = $('#customizer');
+    var $resetstyle = $('#reset-style');
+    var $font = $('#font');
+    var $theme = $('#theme');
+    var storage = window.MP.storage;
+    var $wrapper = $('#wrapper');
+    $window.on('load', init);
+
+    function init() {
+        $showCustomizerBtn.attr('disabled', false);
+        $showCustomizerBtn.on('click', function () {
+            $customizerModal[0].showModal();
+        });
+        $font.on('change', function (e) {
+            var font = $(e.target)
+                .val();
+            setFont({
+                font: font
+            });
+        });
+        $theme.on('change', function (e) {
+            var theme = $(e.target)
+                .val();
+            setTheme({
+                theme: theme
+            });
+        });
+        $resetstyle.on('click', resetStyle);
+        storage.get('theme', setTheme);
+        storage.get('font', setFont);
+        $wrapper.css('opacity', 1);
+    }
+
+    function setFont(setting) {
+        var font = setting.font !== 'null' ? setting.font : 'Roboto';
+        if (setting.font) {
+            $('#font-link')
+                .attr('href', 'https://fonts.googleapis.com/css?family=' + font.replace(/ /g, '+'));
+            $('#current-font')
+                .text('.mdl-button,h1,h2,h3,h4,h5,h6,.mdl-layout-title,body{font-family: ' + font + ' }');
+            storage.set(setting);
+            $font.val(font);
+        }
+    }
+
+    function setTheme(setting) {
+        var theme = setting.theme !== 'null' ? setting.theme : 'indigo-blue';
+        if (setting.theme) {
+            $('#theme-link')
+                .attr('href', 'assets/css/lib/material.' + theme + '.min.css');
+            storage.set(setting);
+            $('[name="theme-color"]')
+                .attr('content', colorToHex($('header')
+                    .css('background-color')));
+            $theme.val(theme);
+        }
+    }
+
+    function resetStyle() {
+        $('#theme')
+            .val('blue-pink')
+            .trigger('change');
+        $('#font')
+            .val('Roboto')
+            .trigger('change');
+    }
+
+    function colorToHex(color) {
+        if (color.substr(0, 1) === '#') {
+            return color;
+        }
+        var digits = /(.*?)rgb\((\d+), (\d+), (\d+)\)/.exec(color);
+        var red = parseInt(digits[2]);
+        var green = parseInt(digits[3]);
+        var blue = parseInt(digits[4]);
+        var rgb = blue | (green << 8) | (red << 16);
+        return digits[1] + '#' + rgb.toString(16);
+    }
+}(jQuery));
+
+
+window.MP = window.MP || {};
 MP.settings = (function ($) {
     var $window = $(window);
     var storage = window.MP.storage;
@@ -1568,6 +1640,82 @@ MP.playlist = (function ($) {
 
 
 window.MP = window.MP || {};
+MP.chrome = (function($) {
+    var sortby = MP.playlist.sortby;
+    var renderPlaylist = MP.playlist.renderPlaylist;
+    var $playlistview = $('#playlist-view');
+    var readTags = MP.playlist.readTags;
+    var playlist = [];
+    var list = [];
+    var $window = $(window);
+    $window.on('load', init);
+
+    function init() {
+        if (window.chrome && window.chrome.storage) {
+            console.log('checking for open file');
+            chrome.storage.local.get('open', function(item) {
+                chrome.storage.local.set({ open: false }, function() {
+                    if (item.open) {
+                        list.push(item.open);
+                        list.forEach(parseLocalFile);
+                        console.log(list);
+                        console.log(playlist);
+                        renderPlaylist($playlistview, playlist);
+                        processFiles();
+
+                    }
+                });
+            });
+            chrome.runtime.onMessage.addListener(
+                function(request, sender, sendResponse) {
+                    list.push(request);
+                    list.forEach(parseLocalFile);
+                    renderPlaylist($playlistview, playlist);
+                    processFiles();
+
+                });
+        }
+    }
+
+    function parseLocalFile(url, index) {
+        if (!index) {
+            playlist = [];
+            playlist.push("<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th><th>File</th></tr>");
+        }
+        var urlArray = url.split('/');
+        var row = ['<tr class="track" data-src="' + url + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + urlArray[urlArray.length - 1] + '</td></tr>'].join('');
+        playlist.push(row);
+    }
+
+    function processFiles() {
+        $playlistview.find('.track').each(function(index, track) {
+            var $track = $(track);
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = "blob";
+            xhr.onload = function() {
+                var file = new File([xhr.response], 'blob');
+                var url = URL.createObjectURL(file);
+                var $track = $($playlistview.find('tr')[index + 1]);
+                var oldSrc = $track.data('src');
+                $track.data('src', url);
+                $track.attr('data-src', url);
+                $track.attr('data-link', oldSrc);
+                readTags(file, index);
+            };
+            xhr.open('GET', $track.data('src'));
+            xhr.onerror = function() {
+                downloadFile(fileObj, index, true);
+            };
+            xhr.send();
+        });
+    }
+    return {
+        init: init
+    };
+
+}(jQuery));
+
+window.MP = window.MP || {};
 MP.contextmenu = (function ($) {
     'use strict';
     /*
@@ -1700,92 +1848,6 @@ MP.contextmenu = (function ($) {
     });
     $window.on('hashchange', hashListener);
 }(jQuery))
-
-
-window.MP = window.MP || {};
-MP.customizer = (function ($) {
-    /*
-        Customizer
-     */
-    var $window = $(window);
-    var $showCustomizerBtn = $('#show-customizer');
-    var $customizerModal = $('#customizer');
-    var $resetstyle = $('#reset-style');
-    var $font = $('#font');
-    var $theme = $('#theme');
-    var storage = window.MP.storage;
-
-    function initCustomizer() {
-        $showCustomizerBtn.attr('disabled', false);
-        $showCustomizerBtn.on('click', function () {
-            $customizerModal[0].showModal();
-        });
-        $font.on('change', function (e) {
-            var font = $(e.target)
-                .val();
-            setFont({
-                font: font
-            });
-        });
-        $theme.on('change', function (e) {
-            var theme = $(e.target)
-                .val();
-            setTheme({
-                theme: theme
-            });
-        });
-        $resetstyle.on('click', resetStyle);
-        storage.get('theme', setTheme);
-        storage.get('font', setFont);
-    }
-
-    function setFont(setting) {
-        var font = setting.font !== 'null' ? setting.font : 'Roboto';
-        if (setting.font) {
-            $('#font-link')
-                .attr('href', 'https://fonts.googleapis.com/css?family=' + font.replace(/ /g, '+'));
-            $('#current-font')
-                .text('.mdl-button,h1,h2,h3,h4,h5,h6,.mdl-layout-title,body{font-family: ' + font + ' }');
-            storage.set(setting);
-            $font.val(font);
-        }
-    }
-
-    function setTheme(setting) {
-        var theme = setting.theme !== 'null' ? setting.theme : 'indigo-blue';
-        if (setting.theme) {
-            $('#theme-link')
-                .attr('href', 'assets/css/lib/material.' + theme + '.min.css');
-            storage.set(setting);
-            $('[name="theme-color"]')
-                .attr('content', colorToHex($('header')
-                    .css('background-color')));
-            $theme.val(theme);
-        }
-    }
-
-    function resetStyle() {
-        $('#theme')
-            .val('blue-pink')
-            .trigger('change');
-        $('#font')
-            .val('Roboto')
-            .trigger('change');
-    }
-
-    function colorToHex(color) {
-        if (color.substr(0, 1) === '#') {
-            return color;
-        }
-        var digits = /(.*?)rgb\((\d+), (\d+), (\d+)\)/.exec(color);
-        var red = parseInt(digits[2]);
-        var green = parseInt(digits[3]);
-        var blue = parseInt(digits[4]);
-        var rgb = blue | (green << 8) | (red << 16);
-        return digits[1] + '#' + rgb.toString(16);
-    }
-    $window.on('load', initCustomizer);
-}(jQuery));
 
 
 window.MP = window.MP || {};
@@ -2172,74 +2234,3 @@ MP.visualizer = function() {
 
 };
 MP.visualizer();
-
-window.MP = window.MP || {};
-MP.chrome = (function($) {
-    var sortby = MP.playlist.sortby;
-    var renderPlaylist = MP.playlist.renderPlaylist;
-    var $playlistview = $('#playlist-view');
-    var readTags = MP.playlist.readTags;
-    var playlist = [];
-    var list = [];
-    var $window = $(window);
-
-    function parseLocalFile(url, index) {
-        if (!index) {
-            playlist = [];
-            playlist.push("<tr><th>No</th><th>Artist</th><th>Album</th><th>Title</th><th>File</th></tr>");
-        }
-        var urlArray = url.split('/');
-        var row = ['<tr class="track" data-src="' + url + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + urlArray[urlArray.length - 1] + '</td></tr>'].join('');
-        playlist.push(row);
-    }
-
-    function processFiles() {
-        $playlistview.find('.track').each(function(index, track) {
-            var $track = $(track);
-            var xhr = new XMLHttpRequest();
-            xhr.responseType = "blob";
-            xhr.onload = function() {
-                var file = new File([xhr.response], 'blob');
-                var url = URL.createObjectURL(file);
-                var $track = $($playlistview.find('tr')[index + 1]);
-                var oldSrc = $track.data('src');
-                $track.data('src', url);
-                $track.attr('data-src', url);
-                $track.attr('data-link', oldSrc);
-                readTags(file, index);
-            };
-            xhr.open('GET', $track.data('src'));
-            xhr.onerror = function() {
-                downloadFile(fileObj, index, true);
-            };
-            xhr.send();
-        });
-    }
-    $window.on('load', function() {
-        if (window.chrome && window.chrome.storage) {
-            console.log('checking for open file');
-            chrome.storage.local.get('open', function(item) {
-                chrome.storage.local.set({ open: false }, function() {
-                    if (item.open) {
-                        list.push(item.open);
-                        list.forEach(parseLocalFile);
-                        console.log(list);
-                        console.log(playlist);
-                        renderPlaylist($playlistview, playlist);
-                        processFiles();
-
-                    }
-                });
-            });
-            chrome.runtime.onMessage.addListener(
-                function(request, sender, sendResponse) {
-                    list.push(request);
-                    list.forEach(parseLocalFile);
-                    renderPlaylist($playlistview, playlist);
-                    processFiles();
-
-                });
-        }
-    });
-
-}(jQuery));

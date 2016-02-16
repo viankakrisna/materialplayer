@@ -10,8 +10,10 @@ MP.customizer = (function ($) {
     var $font = $('#font');
     var $theme = $('#theme');
     var storage = window.MP.storage;
+    var $wrapper = $('#wrapper');
+    $window.on('load', init);
 
-    function initCustomizer() {
+    function init() {
         $showCustomizerBtn.attr('disabled', false);
         $showCustomizerBtn.on('click', function () {
             $customizerModal[0].showModal();
@@ -33,6 +35,7 @@ MP.customizer = (function ($) {
         $resetstyle.on('click', resetStyle);
         storage.get('theme', setTheme);
         storage.get('font', setFont);
+        $wrapper.css('opacity', 1);
     }
 
     function setFont(setting) {
@@ -80,6 +83,5 @@ MP.customizer = (function ($) {
         var rgb = blue | (green << 8) | (red << 16);
         return digits[1] + '#' + rgb.toString(16);
     }
-    $window.on('load', initCustomizer);
 }(jQuery));
 
