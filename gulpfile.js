@@ -105,6 +105,14 @@ gulp.task('minifyhtml', function() {
         .pipe(gulp.dest('.'));
 });
 
+gulp.task('inline', function() {
+    return gulp
+        .src('./index.html')
+        .pipe(inlinesource())
+        .pipe(gulp.dest('.'));
+});
+
+
 function swallowError(error) {
     console.log(error.toString());
     this.emit('end');
