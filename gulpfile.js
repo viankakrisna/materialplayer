@@ -1,3 +1,6 @@
+/*
+    Dependancies
+ */
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var fs = require('fs');
@@ -10,6 +13,10 @@ var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 // var browserSync = require('browser-sync')
 // .create();
+
+/*
+    Path config
+ */
 var paths = {
     styles: ['assets/css/*.css'],
     scripts: ['assets/js/*.js'],
@@ -18,6 +25,11 @@ var paths = {
 var scripts = JSON.parse(fs.readFileSync('scripts.json', 'utf8'));
 var styles = JSON.parse(fs.readFileSync('styles.json', 'utf8'));
 var partials = JSON.parse(fs.readFileSync('partials.json', 'utf8'));
+
+/*
+    Default & Watch || $ gulp
+ */
+gulp.task('default', ['scripts', 'styles', 'partials', 'watch']);
 gulp.task('scripts', function() {
     return gulp.src(scripts)
         .pipe(sourcemaps.init())
@@ -59,6 +71,11 @@ gulp.task('watch', function() {
     gulp.watch(['index.html', 'bundle.js'])
         // .on('change', browserSync.reload);
 });
+
+/*
+    Minifier || $ gulp minify
+ */
+gulp.task('minify', ['minifycss', 'minifyjs', 'minifyhtml']);
 gulp.task('minifycss', function() {
     return gulp
         .src('bundle.css')
@@ -87,8 +104,6 @@ gulp.task('minifyhtml', function() {
         }))
         .pipe(gulp.dest('.'));
 });
-gulp.task('minify', ['minifycss', 'minifyjs', 'minifyhtml']);
-gulp.task('default', ['scripts', 'styles', 'partials', 'watch']);
 
 function swallowError(error) {
     console.log(error.toString());
