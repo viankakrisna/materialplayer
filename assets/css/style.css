@@ -10,6 +10,10 @@ body {
     opacity: 0;
 }
 
+.visualizer-element {
+    display: none;
+}
+
 table h4 {
     text-align: center;
     line-height: calc(100vh - 258px);
@@ -268,6 +272,10 @@ footer {
     overflow-x: auto;
     overflow-y: hidden;
     height: 1.5em;
+}
+
+.visualizer-element {
+    display: none;
 }
 
 #currenttrackwrapper::-webkit-scrollbar {

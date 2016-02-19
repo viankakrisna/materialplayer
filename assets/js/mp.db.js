@@ -9,7 +9,7 @@ MP.db = (function($) {
     var $libraryview = MP.init.el.libraryView;
     var $databasedeleted = MP.init.el.deleteDatabase;
     var tableOption = MP.init.option.table;
-    var rows = [];
+    var songs = [];
 
     var db = new Dexie(databaseName);
 
@@ -29,23 +29,22 @@ MP.db = (function($) {
     function createRows(song) {
         var src = URL.createObjectURL(song.file);
         var number = $(song.dom).find('.track-number').text();
-        var dom = '<tr class="track" data-src="' + src + '" data-id="' + song.id + '"><td class="track-number">' + number + '</td><td class="track-artist">' + song.artist + '</td><td class="track-album">' + song.album + '</td><td class="track-title">' + song.title + '</td><td class="track-file"></td>/tr>';
-        rows.push(dom);
+        songs.push({
+            tracknumber: number,
+            artist: song.artist,
+            album: song.album,
+            title: song.title,
+            id: song.id,
+            source: src
+        });
     }
 
     function rowsCreated() {
-        if ($.fn.dataTable.isDataTable($libraryview)) {
-            $libraryview.DataTable().destroy();
-        }
-        if (rows.length) {
-            $libraryview.html(MP.playlist.tableheading);
-            $libraryview.append(rows.join(''));
-            $libraryview.DataTable(tableOption);
-            console.log('Library rendered.');
-        } else {
-            $libraryview.html('<tr class="open-dialog" href="#open"><td colspan="5"><h4>Your library is empty.</h4></td></tr>');
-            console.log('No songs found.');
-        }
+        var template = $('#library-template').html();
+        Mustache.parse(template);
+        var rendered = Mustache.render(template, { songs: songs });
+        $libraryview.html(rendered);
+        console.log('Library rendered.');
     }
 
     function databaseError(error) {

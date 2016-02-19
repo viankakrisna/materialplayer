@@ -1,5 +1,5 @@
 window.MP = window.MP || {};
-MP.playlist = (function ($) {
+MP.playlist = (function($) {
     'use strict';
     /*
         Playlist View
@@ -27,13 +27,13 @@ MP.playlist = (function ($) {
         path = path || "";
         if (item.isFile) {
             // Get file
-            item.file(function (file) {
+            item.file(function(file) {
                 console.log("File:", path + file.name);
             });
         } else if (item.isDirectory) {
             // Get folder contents
             var dirReader = item.createReader();
-            dirReader.readEntries(function (entries) {
+            dirReader.readEntries(function(entries) {
                 for (var i = 0; i < entries.length; i++) {
                     traverseFileTree(entries[i], path + item.name + "/");
                 }
@@ -82,12 +82,12 @@ MP.playlist = (function ($) {
             }
         }
         switch (ascdesc) {
-        case 'ascending':
-            selectedSort = ascending;
-            break;
-        case 'descending':
-            selectedSort = descending;
-            break;
+            case 'ascending':
+                selectedSort = ascending;
+                break;
+            case 'descending':
+                selectedSort = descending;
+                break;
         }
         return selectedSort;
     }
@@ -97,22 +97,51 @@ MP.playlist = (function ($) {
         var fileNameArr = file.name.split('.');
         var extension = fileNameArr[fileNameArr.length - 1];
         switch (extension) {
-        case 'srt':
-            $subtitle.attr('data-srt', url);
-            break;
-        default:
-            if (!index) {
-                playlist = [];
-                playlist.push(tableheading);
-            }
-            playlist.push(['<tr class="track" data-src="' + url + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + file.name + '</td></tr>'].join(''));
-            break;
+            case 'json':
+                importJSONtoPlaylist(url).then(function(res) {
+                    var songs = [];
+                    res = JSON.parse(res);
+                    res.forEach(function(song, index) {
+                        songs.push({
+                            tracknumber: song['Track Number'],
+                            artist: song.artist,
+                            album: song.album,
+                            title: song.title,
+                            id: song.id,
+                            file: song.name,
+                            source: 'https://docs.google.com/uc?id=' + song.id + '&export=download'
+                        });
+                    });
+                    var template = $('#playlist-template').html();
+                    Mustache.parse(template);
+                    var rendered = Mustache.render(template, { songs: songs });
+                    $playlistview.html(rendered);
+                });
+                break;
+            case 'srt':
+                $subtitle.attr('data-srt', url);
+                break;
+            default:
+                if (!index) {
+                    playlist = [];
+                    playlist.push(tableheading);
+                }
+                playlist.push(['<tr class="track" data-src="' + url + '">', '<td class="track-number">' + (++index) + '</td>', '<td class="track-artist"></td>', '<td class="track-album"></td>', '<td class="track-title"></td>', '<td class="track-file">' + file.name + '</td></tr>'].join(''));
+                break;
         }
+    }
+
+    function importJSONtoPlaylist(url) {
+        return $.get(url);
+    }
+
+    function readFile(blob) {
+        return new File(blob, 'blob');
     }
 
     function readTags(file, index, $track) {
         if (file.name.indexOf('.mp4') === -1) {
-            ID3.loadTags('', function () {
+            ID3.loadTags('', function() {
                 var $track = $track || $($playlistview.find('tr')[index + 1]);
                 var tags = ID3.getAllTags('');
                 $track.find('.track-artist')
@@ -130,7 +159,7 @@ MP.playlist = (function ($) {
     }
 
     function setupTrackEvents() {
-        $wrapper.on('click', '.track', function (e) {
+        $wrapper.on('click', '.track', function(e) {
             var $this = $(this);
             var url = $this.data('src');
             $('.track')
@@ -150,4 +179,3 @@ MP.playlist = (function ($) {
         readTags: readTags
     };
 }(jQuery));
-

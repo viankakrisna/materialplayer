@@ -1,12 +1,25 @@
 <section class="mdl-layout__tab-panel" id="library">
     <div class="page-content">
         <table id="libraryview" class="mdl-data-table mdl-shadow--2dp">
-            <thead>
-                <th></th>
-            </thead>
-            <tbody>
-                <td></td>
-            </tbody>
         </table>
+        <script id="library-template" type="x-tmpl-mustache">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Artist</th>
+                    <th>Album</th>
+                    <th>Title</th>
+                    <th>File</th>
+                </tr>
+            </thead>
+            {{#songs}}
+            <tr class="track" data-src="{{source}}" data-id="{{id}}">
+                <td class="track-number">{{tracknumber}}</td>
+                <td class="track-artist">{{artist}}</td>
+                <td class="track-album">{{album}}</td>
+                <td class="track-title">{{title}}</td>
+                <td class="track-file"></td>
+            </tr>; {{/songs}}
+        </script>
     </div>
 </section>

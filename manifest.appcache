@@ -11,7 +11,7 @@ CACHE:
 http://localhost/materialplayer/
 
 #style sheets
-http://localhost/materialplayer/assets/css/material.blue-pink.min.css
+http://localhost/materialplayer/assets/css/lib/material.blue-pink.min.css
 http://localhost/materialplayer/bundle.css
 https://fonts.googleapis.com/css?family=Roboto
 https://fonts.googleapis.com/icon?family=Material+Icons

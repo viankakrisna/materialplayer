@@ -60,4 +60,4 @@ MP.visualizer = function() {
     renderChart();
 
 };
-MP.visualizer();
+// MP.visualizer();

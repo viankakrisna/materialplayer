@@ -1,11 +1,30 @@
-            <section class="mdl-layout__tab-panel is-active" id="playlist">
-                <div class="page-content">
-                    <table id="playlist-view" class="mdl-data-table mdl-shadow--2dp">
-                        <tr>
-                            <td>
-                                <h4 class="open-dialog" href="#open">Drop files here to play!</h4>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </section>
+<section class="mdl-layout__tab-panel is-active" id="playlist">
+    <div class="page-content">
+        <table id="playlist-view" class="mdl-data-table mdl-shadow--2dp">
+            <tr>
+                <td>
+                    <h4 class="open-dialog" href="#open">Drop files here to play!</h4>
+                </td>
+            </tr>
+        </table>
+        <script id="playlist-template" type="x-tmpl-mustache">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Artist</th>
+                    <th>Album</th>
+                    <th>Title</th>
+                    <th>File</th>
+                </tr>
+            </thead>
+            {{#songs}}
+            <tr class="track" data-src="{{source}}" data-id="{{id}}">
+                <td class="track-number">{{tracknumber}}</td>
+                <td class="track-artist">{{artist}}</td>
+                <td class="track-album">{{album}}</td>
+                <td class="track-title">{{title}}</td>
+                <td class="track-file">{{file}}</td>
+            </tr>; {{/songs}}
+        </script>
+    </div>
+</section>

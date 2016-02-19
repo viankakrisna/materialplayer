@@ -7,8 +7,10 @@ MP.player = (function($) {
     var $playerwrapper = $('footer');
     var $playlistview = $('#playlist-view');
     var $player = $('#player');
+    var player = $player[0];
     var $subtitle = $('#subtitle');
     var $slider = $('#slider');
+    var slider = $slider[0];
     var $loop = $('#loop');
     var $shuffle = $('#shuffle');
     var $play = $('#play');
@@ -30,19 +32,19 @@ MP.player = (function($) {
     }
 
     function seek(event) {
-        var seekTo = $player[0].duration * ($slider.val() / sliderResolution);
-        $player[0].currentTime = seekTo;
+        var seekTo = player.duration * ($slider.val() / sliderResolution);
+        player.currentTime = seekTo;
     }
 
     function play(url) {
-        $player[0].src = url;
-        $player[0].play();
+        player.src = url;
+        player.play();
         $playerwrapper.addClass('loading');
     }
 
     function playBtnHandler() {
         if ($player.attr('src')) {
-            $player[0].play();
+            player.play();
         } else {
             $('.track')
                 .first()
@@ -51,7 +53,7 @@ MP.player = (function($) {
     }
 
     function pauseBtnHandler() {
-        $player[0].pause();
+        player.pause();
     }
 
     function prevBtnHandler() {
@@ -107,7 +109,7 @@ MP.player = (function($) {
     function onTimeupdate(e) {
         var value = (e.target.currentTime / e.target.duration) * sliderResolution;
         var time = '(' + formatTime(e.target.currentTime) + ' / ' + formatTime(e.target.duration) + ')';
-        $slider[0].MaterialSlider.change(value);
+        slider.MaterialSlider.change(value);
         $time.html(time);
         $playerwrapper.removeClass('loading');
     }
@@ -161,7 +163,7 @@ MP.player = (function($) {
         $player.on('pause', onPause);
         $player.on('play', onPlay);
         $player.on('ended', onEnded);
-        $player[0].ontimeupdate = onTimeupdate;
+        player.ontimeupdate = onTimeupdate;
         $loop.on('click', toggleActive);
         $shuffle.on('click', toggleActive);
         $wrapper.on('keyup', keyupListener);

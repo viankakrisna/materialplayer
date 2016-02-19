@@ -9,7 +9,7 @@
     "assets/js/lib/polyfiller.js",
     "assets/js/lib/id3-minimized.js",
     "assets/js/lib/filepicker.js",
-    "assets/js/lib/d3.v3.min.js",
+    "assets/js/lib/mustache.min.js",
     "assets/js/mp.helper.js",
     "assets/js/mp.network.js",
     "assets/js/mp.init.js",
@@ -28,6 +28,5 @@
     "assets/js/mp.youtube.js",
     "assets/js/mp.artwork.js",
     "assets/js/mp.log.js",
-    "assets/js/mp.contextmenu.js",
-    "assets/js/mp.visualizer.js"
+    "assets/js/mp.contextmenu.js"
 ]

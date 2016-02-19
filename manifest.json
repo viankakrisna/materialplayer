@@ -3,26 +3,32 @@
     "version": "1",
     "description": "Material designed multimedia player",
     "manifest_version": 2,
-    "background": {
-        "scripts": ["chrome/background.js"]
+    "app": {
+        "background": {
+            "scripts": ["chrome/background.js"]
+        }
     },
     "externally_connectable": {
         "matches": ["*://*.google.com/*"]
     },
+    "file_handlers": {
+        "qo_documents": {
+            "extensions": ["mp3", "m4a", "aac", "wav", "flac"]
+        }
+    },
+    "webview": {
+        "partitions": [{
+            "name": "static",
+            "accessible_resources": ["chrome/sandbox.html", "chrome/sandbox.js", "assets/js/filepicker.js"]
+        }]
+    },
     "icons": {
         "36": "icon.png"
     },
-    "browser_action": {
-        "default_icon": "icon.png"
-    },
-    "content_scripts": [{
-        "matches": ["file://*.mp3"],
-        "js": ["chrome/open.js"]
-    }],
-    "content_security_policy": "script-src 'self' https://*.google.com https://*.dropbox.com; object-src 'self'",
-    "permissions": ["clipboardRead", "clipboardWrite", "<all_urls>", "identity", "storage", "unlimitedStorage", "tabs"],
+    "permissions": ["webview","clipboardRead", "clipboardWrite", "fileSystem", "fileSystem.write", "<all_urls>", "identity", "storage", "unlimitedStorage"],
     "oauth2": {
         "client_id": "1868175267-d8imsu875ffa3csl8nebgkin5gi035d2.apps.googleusercontent.com",
         "scopes": ["https://www.googleapis.com/auth/plus.login", "https://www.googleapis.com/auth/drive", "email", "profile"]
     }
 }
+
