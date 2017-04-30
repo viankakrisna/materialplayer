@@ -1,5 +1,7 @@
 # Material Player
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/viankakrisna/materialplayer.svg)](https://greenkeeper.io/)
+
 This is a multimedia player for browsers.
 Created using Google's Material Design Lite CSS Framework and various other libraries.
 
